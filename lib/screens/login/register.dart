@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last, library_private_types_in_public_api, use_key_in_widget_constructors, use_build_context_synchronously, deprecated_member_use, unused_field, unused_local_variable, no_leading_underscores_for_local_identifiers
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, library_private_types_in_public_api, use_key_in_widget_constructors, use_build_context_synchronously, deprecated_member_use, unused_field, unused_local_variable, no_leading_underscores_for_local_identifiers, unnecessary_brace_in_string_interps
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -160,7 +160,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ElevatedButton(
                   onPressed: () => {Navigator.pop(context)},
                   child: Text('close'),
-                  style: ElevatedButton.styleFrom(primary: Colors.pink),
+                  style: ElevatedButton.styleFrom(
+                      primary: Color.fromARGB(255, 65, 161, 236)),
                 ),
                 ElevatedButton(
                   onPressed: _isVerified
@@ -193,7 +194,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         },
                   child: Text(_isVerified ? 'Verified' : 'Verify Account'),
                   style: ElevatedButton.styleFrom(
-                    primary: _isVerified ? Colors.green : Colors.pink,
+                    primary: _isVerified
+                        ? Colors.green
+                        : Color.fromARGB(255, 65, 161, 236),
                   ),
                 ),
               ],
@@ -254,7 +257,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ElevatedButton(
                   onPressed: () => {Navigator.pop(context)},
                   child: Text('close'),
-                  style: ElevatedButton.styleFrom(primary: Colors.pink),
+                  style: ElevatedButton.styleFrom(
+                      primary: Color.fromARGB(255, 65, 161, 236)),
                 ),
                 ElevatedButton(
                   onPressed: _isVerified
@@ -264,7 +268,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       : () async {
                           var authResponse = await AuthProvider.verifyInstagram(
                               username: _instagramController.text,
-                              verificationCode: '@lesyeuxdenini');
+                              verificationCode: '${_verificationCode}');
                           setState(() {
                             _isVerified = authResponse['success'];
                           });
@@ -285,7 +289,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         },
                   child: Text(_isVerified ? 'Verified' : 'Verify Account'),
                   style: ElevatedButton.styleFrom(
-                    primary: _isVerified ? Colors.green : Colors.pink,
+                    primary: _isVerified
+                        ? Colors.green
+                        : Color.fromARGB(255, 65, 161, 236),
                   ),
                 ),
               ],
@@ -330,8 +336,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
       builder: (context, child) {
         return Theme(
           data: ThemeData(
-            primarySwatch: Colors.pink, // Set the primary color to pink
-            hintColor: Colors.pink,
+            primarySwatch: Colors.blue, // Set the primary color to pink
+            hintColor: Color.fromARGB(255, 65, 161, 236),
           ),
           child: child ?? Container(),
         );
@@ -351,6 +357,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 65, 161, 236),
         title: Text(
           'Registration Page',
           style: TextStyle(color: Colors.white),
@@ -369,14 +376,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                        color: Colors.pink), // Set focused border color to pink
+                        color: Color.fromARGB(255, 65, 161,
+                            236)), // Set focused border color to pink
                   ),
                   labelStyle: TextStyle(
                     color:
                         Colors.black, // Set initial label text color to black
                   ),
                 ),
-                cursorColor: Colors.pink, // Set cursor color to pink
+                cursorColor: Color.fromARGB(
+                    255, 65, 161, 236), // Set cursor color to pink
                 maxLines: 1,
                 onChanged: (_) => _updateRegisterButtonState(),
               ),
@@ -388,14 +397,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                        color: Colors.pink), // Set focused border color to pink
+                        color: Color.fromARGB(255, 65, 161,
+                            236)), // Set focused border color to pink
                   ),
                   labelStyle: TextStyle(
                     color:
                         Colors.black, // Set initial label text color to black
                   ),
                 ),
-                cursorColor: Colors.pink, // Set cursor color to pink
+                cursorColor: Color.fromARGB(
+                    255, 65, 161, 236), // Set cursor color to pink
                 maxLines: 1,
                 onChanged: (_) => _updateRegisterButtonState(),
               ),
@@ -407,14 +418,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                        color: Colors.pink), // Set focused border color to pink
+                        color: Color.fromARGB(255, 65, 161,
+                            236)), // Set focused border color to pink
                   ),
                   labelStyle: TextStyle(
                     color:
                         Colors.black, // Set initial label text color to black
                   ),
                 ),
-                cursorColor: Colors.pink, // Set cursor color to pink
+                cursorColor: Color.fromARGB(
+                    255, 65, 161, 236), // Set cursor color to pink
                 maxLines: 1,
                 onChanged: (_) => _updateRegisterButtonState(),
               ),
@@ -427,11 +440,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                        color: Colors.pink), // Set focused border color to pink
+                        color: Color.fromARGB(255, 65, 161,
+                            236)), // Set focused border color to pink
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      color: Colors.pink,
+                      color: Color.fromARGB(255, 65, 161, 236),
                       _isPasswordVisible
                           ? Icons.visibility
                           : Icons.visibility_off,
@@ -443,7 +457,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         Colors.black, // Set initial label text color to black
                   ),
                 ),
-                cursorColor: Colors.pink, // Set cursor color to pink
+                cursorColor: Color.fromARGB(
+                    255, 65, 161, 236), // Set cursor color to pink
                 maxLines: 1,
                 onChanged: (_) => _updateRegisterButtonState(),
               ),
@@ -454,13 +469,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   labelText: 'Date of Birth',
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.pink),
+                    borderSide:
+                        BorderSide(color: Color.fromARGB(255, 65, 161, 236)),
                   ),
                   labelStyle: TextStyle(
                     color: Colors.black,
                   ),
                 ),
-                cursorColor: Colors.pink,
+                cursorColor: Color.fromARGB(255, 65, 161, 236),
                 maxLines: 1,
                 readOnly: true, // Make the field read-only
                 onTap: () {
@@ -477,13 +493,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         labelText: 'Instagram ID',
                         border: OutlineInputBorder(),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.pink),
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 65, 161, 236)),
                         ),
                         labelStyle: TextStyle(
                           color: Colors.black,
                         ),
                       ),
-                      cursorColor: Colors.pink,
+                      cursorColor: Color.fromARGB(255, 65, 161, 236),
                       maxLines: 1,
                       onChanged: (_) => _updateRegisterButtonState(),
                     ),
@@ -498,7 +515,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           : null;
                     },
                     child: Text('verify Id'),
-                    style: ElevatedButton.styleFrom(primary: Colors.pink),
+                    style: ElevatedButton.styleFrom(
+                        primary: Color.fromARGB(255, 65, 161, 236)),
                   ),
                 ],
               ),
@@ -512,13 +530,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         labelText: 'Youtube Profile Link',
                         border: OutlineInputBorder(),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.pink),
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 65, 161, 236)),
                         ),
                         labelStyle: TextStyle(
                           color: Colors.black,
                         ),
                       ),
-                      cursorColor: Colors.pink,
+                      cursorColor: Color.fromARGB(255, 65, 161, 236),
                       maxLines: 1,
                       onChanged: (_) => _updateRegisterButtonState(),
                     ),
@@ -533,7 +552,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           : null;
                     },
                     child: Text('verify Id'),
-                    style: ElevatedButton.styleFrom(primary: Colors.pink),
+                    style: ElevatedButton.styleFrom(
+                        primary: Color.fromARGB(255, 65, 161, 236)),
                   ),
                 ],
               ),
@@ -565,14 +585,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           Icons.male,
                           size: 30.0,
                           color: _selectedGender == Gender.male
-                              ? Colors.pink
+                              ? Color.fromARGB(255, 65, 161, 236)
                               : Colors.grey,
                         ),
                         Text(
                           'Male',
                           style: TextStyle(
                             color: _selectedGender == Gender.male
-                                ? Colors.pink
+                                ? Color.fromARGB(255, 65, 161, 236)
                                 : Colors.grey,
                           ),
                         ),
@@ -602,14 +622,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           Icons.female,
                           size: 30.0,
                           color: _selectedGender == Gender.female
-                              ? Colors.pink
+                              ? Color.fromARGB(255, 65, 161, 236)
                               : Colors.grey,
                         ),
                         Text(
                           'Female',
                           style: TextStyle(
                             color: _selectedGender == Gender.female
-                                ? Colors.pink
+                                ? Color.fromARGB(255, 65, 161, 236)
                                 : Colors.grey,
                           ),
                         ),
@@ -639,14 +659,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           Icons.transgender,
                           size: 30.0,
                           color: _selectedGender == Gender.other
-                              ? Colors.pink
+                              ? Color.fromARGB(255, 65, 161, 236)
                               : Colors.grey,
                         ),
                         Text(
                           'Other',
                           style: TextStyle(
                             color: _selectedGender == Gender.other
-                                ? Colors.pink
+                                ? Color.fromARGB(255, 65, 161, 236)
                                 : Colors.grey,
                           ),
                         ),
@@ -677,7 +697,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       child: Text(
                         "Terms & Conditions",
                         style: TextStyle(
-                          color: Theme.of(context).primaryColor,
+                          color: Color.fromARGB(255, 65, 161, 236),
                         ),
                       ),
                     ),
@@ -688,7 +708,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       child: Text(
                         "Privacy Policy",
                         style: TextStyle(
-                          color: Theme.of(context).primaryColor,
+                          color: Color.fromARGB(255, 65, 161, 236),
                         ),
                       ),
                     ),
@@ -700,8 +720,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 onPressed: _isRegisterButtonEnabled ? _register : null,
                 child: Text('Register'),
                 style: ElevatedButton.styleFrom(
-                  primary:
-                      _isRegisterButtonEnabled ? Colors.pink[900] : Colors.grey,
+                  primary: _isRegisterButtonEnabled
+                      ? Color.fromARGB(255, 65, 161, 236)
+                      : Colors.grey,
                 ),
               ),
               Row(
@@ -722,7 +743,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     child: Text(
                       "Login",
                       style: TextStyle(
-                        color: Theme.of(context).primaryColor,
+                        color: Color.fromARGB(255, 65, 161, 236),
                       ),
                     ),
                   ),

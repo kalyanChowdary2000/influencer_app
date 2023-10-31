@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:influ_app/screens/BottomBar/mainpage/mainPage.dart';
 import 'package:influ_app/screens/login/loginCategories.dart';
 import 'package:influ_app/screens/menuPage.dart';
-
 import '../../main.dart';
 import '../../provider/AuthProvider.dart';
 
@@ -24,9 +23,13 @@ class _LoginPageState extends State<LoginPage> {
 
   PageController? _pageController;
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   void initState() {
     _pageController = PageController(initialPage: 1);
-
     super.initState();
   }
 
@@ -54,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                         vertical: 16,
                       ),
                       child: TextFormField(
-                        cursorColor: Colors.pink,
+                        cursorColor: Color.fromARGB(255, 65, 161, 236),
                         controller: phoneController,
                         keyboardType: TextInputType.number,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -63,20 +66,22 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: InputDecoration(
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                                color: Colors
-                                    .pink), // Set focused border color to pink
+                                color: Color.fromARGB(255, 65, 161,
+                                    236)), // Set focused border color to pink
                           ),
                           labelStyle: TextStyle(
                             color: Colors
                                 .black, // Set initial label text color to black
                           ),
-                          fillColor: Colors.pink,
-                          iconColor: Colors.pink,
+                          fillColor: Color.fromARGB(255, 65, 161, 236),
+                          iconColor: Color.fromARGB(255, 65, 161, 236),
                           labelText: "Mobile Number",
                           border: OutlineInputBorder(
                               borderRadius: borderRadius,
-                              borderSide: BorderSide(color: Colors.pink)),
-                          prefixIcon: Icon(Icons.phone, color: Colors.pink),
+                              borderSide: BorderSide(
+                                  color: Color.fromARGB(255, 65, 161, 236))),
+                          prefixIcon: Icon(Icons.phone,
+                              color: Color.fromARGB(255, 65, 161, 236)),
                         ),
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -96,8 +101,8 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: InputDecoration(
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                                color: Colors
-                                    .pink), // Set focused border color to pink
+                                color: Color.fromARGB(255, 65, 161,
+                                    236)), // Set focused border color to pink
                           ),
                           labelStyle: TextStyle(
                             color: Colors
@@ -106,7 +111,8 @@ class _LoginPageState extends State<LoginPage> {
                           border: OutlineInputBorder(
                             borderRadius: borderRadius,
                           ),
-                          prefixIcon: Icon(Icons.lock, color: Colors.pink),
+                          prefixIcon: Icon(Icons.lock,
+                              color: Color.fromARGB(255, 65, 161, 236)),
                           labelText: "Password",
                           hintText: 'Enter your password',
                           suffixIcon: IconButton(
@@ -116,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                                   ? Icons.visibility
                                   : Icons.visibility_off,
 
-                              color: Colors.pink,
+                              color: Color.fromARGB(255, 65, 161, 236),
                             ),
                             onPressed: () {
                               // Update the state i.e. toogle the state of passwordVisible variable
@@ -141,7 +147,8 @@ class _LoginPageState extends State<LoginPage> {
                           horizontal: 8, vertical: 16.0),
                       child: Center(
                         child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(primary: Colors.pink),
+                          style: ElevatedButton.styleFrom(
+                              primary: Color.fromARGB(255, 65, 161, 236)),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               debugPrint(phoneController.text);
@@ -172,6 +179,7 @@ class _LoginPageState extends State<LoginPage> {
     var resp = await AuthProvider.login(phone: phone, password: password);
     print("------------${resp}");
     if (resp["success"]) {
+      dispose();
       Navigator.pushReplacement(context, MaterialPageRoute(
         builder: (context_) {
           return MenuPage();

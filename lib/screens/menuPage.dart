@@ -18,7 +18,7 @@ class _MenuPageState extends State<MenuPage> {
   static List<Widget> _widgetOptions = <Widget>[
     MainPage(),
     NewEnquiryPage(),
-    UpcomingPage(),
+    // UpcomingPage(),
     CompletedPage(),
   ];
   void _onItemTapped(int index) {
@@ -34,7 +34,7 @@ class _MenuPageState extends State<MenuPage> {
       drawer: NavDrawer(),
       appBar: AppBar(
         title: Text('INFLU APP'),
-        backgroundColor: Color.fromARGB(255, 43, 32, 99),
+        backgroundColor: Color.fromARGB(255, 65, 161, 236),
       ),
       body: Center(
         child: _widgetOptions.elementAt(selectedIndex),
@@ -43,7 +43,7 @@ class _MenuPageState extends State<MenuPage> {
           child: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         //backgroundColor: Colors.yellow,
-        selectedItemColor: Color.fromARGB(255, 43, 32, 99),
+        selectedItemColor: Color.fromARGB(255, 65, 161, 236),
         unselectedItemColor: Color.fromARGB(255, 12, 12, 12),
         items: [
           BottomNavigationBarItem(

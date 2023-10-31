@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_local_variable, await_only_futures, dead_code, library_private_types_in_public_api
 
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,9 +16,7 @@ class NewEnquiryPage extends StatefulWidget {
 class _NewEnquiryPageState extends State<NewEnquiryPage> {
   var myAddsList = [];
   double downloadProgress = 0.0;
-  bool isInstagramVerified =
-      false; // You can set these values based on your verification logic
-  bool isYouTubeVerified = false;
+
   void fetchAddData() async {
     var data = await AuthProvider.fetchInfluAdd(); // Replace with your API call
     print(data);
@@ -72,7 +70,9 @@ class _NewEnquiryPageState extends State<NewEnquiryPage> {
 
   Widget _buildNewOrderItem(myAddsList) {
     final socialMediaLinks = myAddsList["socialMediaLinks"] ?? [];
-
+    bool isInstagramVerified =
+        false; // You can set these values based on your verification logic
+    bool isYouTubeVerified = false;
     List<Widget> imageWidgets = [];
     List<Widget> videoWidgets = [];
     List<Widget> linkWidgets = [];
@@ -88,15 +88,8 @@ class _NewEnquiryPageState extends State<NewEnquiryPage> {
       }
     }
 
-    Widget copyDescriptionButton = ElevatedButton(
-      onPressed: () {
-        _copyDescriptionToClipboard(myAddsList['description']);
-      },
-      child: Text("Copy"),
-    );
-
     return Card(
-      color: Color.fromARGB(255, 240, 240, 239),
+      color: Color.fromARGB(255, 243, 243, 241),
       elevation: 4,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
@@ -132,9 +125,10 @@ class _NewEnquiryPageState extends State<NewEnquiryPage> {
                 Text(
                   "Downloadable Media Links",
                   style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,10 +146,9 @@ class _NewEnquiryPageState extends State<NewEnquiryPage> {
                       height: 60,
                       width: 60,
                       child: Padding(
-                        padding:
-                            EdgeInsets.all(2.0), // Adjust the padding as needed
+                        padding: EdgeInsets.all(2.0),
                         child: Image.network(
-                            'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/instagram.png'), // Replace with your image path
+                            'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/instagram.png'),
                       ),
                     )
                   : Text(""),
@@ -164,13 +157,12 @@ class _NewEnquiryPageState extends State<NewEnquiryPage> {
                       height: 60,
                       width: 60,
                       child: Padding(
-                        padding:
-                            EdgeInsets.all(2.0), // Adjust the padding as needed
+                        padding: EdgeInsets.all(2.0),
                         child: Image.network(
-                            'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/youtube_logo.png'), // Replace with your image path
+                            'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/youtube_logo.png'),
                       ),
                     )
-                  : Text("")
+                  : Text(""),
             ],
           ),
           Container(
@@ -190,32 +182,70 @@ class _NewEnquiryPageState extends State<NewEnquiryPage> {
               ),
             ),
           ),
-          SizedBox(
-              width: double.infinity, // Make the button as wide as the card
+          Center(
+            child: SizedBox(
+              width: double.infinity,
               child: ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Color.fromARGB(
-                      255, 43, 32, 99)), // Set the background color to pink
-                  // You can adjust other properties like padding, shape, etc. as needed.
+                  backgroundColor: MaterialStateProperty.all(
+                      Color.fromARGB(255, 65, 161, 236)),
                 ),
                 onPressed: () {
                   _copyDescriptionToClipboard(myAddsList['description']);
                 },
                 child: Text("Copy Description"),
-              )),
-          SizedBox(
-            width: double.infinity, // Make the button as wide as the card
-            child: ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Color.fromARGB(
-                    255, 43, 32, 99)), // Set the background color to pink
-                // You can adjust other properties like padding, shape, etc. as needed.
               ),
-              onPressed: () {
-                _showVerifyDialog(context, myAddsList["tittle"]);
-              },
-              child: Text("verify my post"),
             ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: isInstagramVerified && isYouTubeVerified
+                ? ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.green),
+                      // You can adjust other properties like padding, shape, etc. as needed.
+                    ),
+                    onPressed: () {
+                      // Handle the action when the posts are already verified
+                      // For example, you can show a message or perform a different action.
+                    },
+                    child: Text("Verified"),
+                  )
+                : ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Color.fromARGB(
+                          255,
+                          65,
+                          161,
+                          236)), // Set the background color to pink
+                      // You can adjust other properties like padding, shape, etc. as needed.
+                    ),
+                    onPressed: () async {
+                      setState(() {
+                        isInstagramVerified = false;
+                        isYouTubeVerified = false;
+                      });
+                      var verificationResponse =
+                          await AuthProvider.verifyAdd(myAddsList["tittle"]);
+
+                      if (verificationResponse['instaFlag']) {
+                        setState(() {
+                          isInstagramVerified = true;
+                        });
+                        print("----------------instagram verified");
+                      }
+                      if (verificationResponse['ytFlag']) {
+                        setState(() {
+                          isYouTubeVerified = true;
+                        });
+                        print("----------------------yt verified");
+                      }
+                      // verifyAdd(myAddsList["tittle"]);
+                    },
+                    child: isInstagramVerified || isYouTubeVerified
+                        ? CircularProgressIndicator() // Show a loading indicator when verifying
+                        : Text("Verify my post"),
+                  ), // Button based on verification status
           )
         ],
       ),
@@ -288,74 +318,24 @@ class _NewEnquiryPageState extends State<NewEnquiryPage> {
     return driveLink;
   }
 
-  void verifyAdd(addId) async {
-    await AuthProvider.verifyAdd(addId);
-  }
+  // void verifyAdd(addId) async {
+  //   var verificationResponse = await AuthProvider.verifyAdd(addId);
 
-  void _showVerifyDialog(BuildContext context, addId) {
-    // You can set these values based on your verification logic
-    verifyAdd(addId);
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text("Verify Instagram and YouTube Posts"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text("Please verify your Instagram and YouTube posts here."),
-                  if (!isInstagramVerified)
-                    Column(
-                      children: [
-                        Text("Verifying Instagram..."),
-                        LinearProgressIndicator(), // Loading bar for Instagram
-                      ],
-                    ),
-                  if (!isYouTubeVerified)
-                    Column(
-                      children: [
-                        Text("Verifying YouTube..."),
-                        LinearProgressIndicator(), // Loading bar for YouTube
-                      ],
-                    ),
-                  // You can add more content as needed.
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog.
-                  },
-                  child: Text("Close"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Simulate verification logic (you can replace this with your actual logic).
-                    Future.delayed(Duration(seconds: 2), () {
-                      setState(() {
-                        isInstagramVerified = true;
-                      });
-                    });
-
-                    Future.delayed(Duration(seconds: 2), () {
-                      setState(() {
-                        isYouTubeVerified = true;
-                      });
-                    });
-
-                    // You can perform actual verification logic here.
-                  },
-                  child: Text("Verify"),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
+  //   if (verificationResponse['instaFlag']) {
+  //     setState(() {
+  //       isInstagramVerified = true;
+  //     });
+  //     print("----------------instagram verified");
+  //   }
+  //   if (verificationResponse['ytFlag']) {
+  //     setState(() {
+  //       isYouTubeVerified = true;
+  //     });
+  //     print("----------------------yt verified");
+  //   }
+  //   print(isInstagramVerified);
+  //   print(isYouTubeVerified);
+  // }
 }
 
 class VideoPlayerWidget extends StatefulWidget {

@@ -21,6 +21,7 @@ class _MainPageState extends State<MainPage> {
   String youtubeFollowersCount = '';
   String youtubeEngagementRate = '';
   int youtubeReach = 0;
+  var runningAddsList = [];
   String formatFollowerCount(int followerCount) {
     if (followerCount >= 1000000) {
       double countInMillions = followerCount / 1000000;
@@ -69,11 +70,43 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  void fetchRunningAdds() async {
+    var data = await AuthProvider.fetchComInfluAdd();
+    print("==========================================================");
+    print(data["data"].length);
+    setState(() {
+      runningAddsList = data["data"];
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     fetchInstagramData();
     fetchYoutubeData();
+    fetchRunningAdds();
+  }
+
+  Widget buildRunningAddsList() {
+    print("==========================================================");
+    print(runningAddsList.length);
+    return ListView.separated(
+      padding: const EdgeInsets.all(16.0),
+      itemBuilder: (_, index) {
+        return buildNewOrderItem(runningAddsList[index]);
+      },
+      separatorBuilder: (_, __) {
+        return const Divider();
+      },
+      itemCount: runningAddsList.length,
+    );
+  }
+
+  Widget buildNewOrderItem(myAddsList) {
+    return Container(
+      color: Colors.red,
+      child: Text("${myAddsList}"),
+    );
   }
 
   @override
@@ -115,8 +148,8 @@ class _MainPageState extends State<MainPage> {
                                 print("insta tap");
                               },
                               child: Container(
-                                height: 60,
-                                width: 60,
+                                height: 50,
+                                width: 50,
                                 child: Padding(
                                   padding: EdgeInsets.all(
                                       2.0), // Adjust the padding as needed
@@ -193,8 +226,8 @@ class _MainPageState extends State<MainPage> {
                                 print("youtube tap");
                               },
                               child: Container(
-                                height: 60,
-                                width: 60,
+                                height: 50,
+                                width: 50,
                                 child: Padding(
                                   padding: EdgeInsets.all(
                                       2.0), // Adjust the padding as needed
@@ -323,8 +356,7 @@ class _MainPageState extends State<MainPage> {
         Expanded(
             child: GestureDetector(
               onTap: () {
-                print(
-                    "customize ypout category tap---------------------------");
+                print("customize your category tap---------------------------");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => CategoriesPage()),
@@ -348,8 +380,175 @@ class _MainPageState extends State<MainPage> {
             ),
             flex: 1),
         Expanded(
-            flex: 6,
-            child: Container(color: Color.fromARGB(255, 212, 213, 215))),
+          flex: 6,
+          child: Container(
+            child: Column(children: [
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                child: Text(
+                  "Running Adds Status",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Expanded(
+                child: Container(
+                  color: Color.fromARGB(255, 243, 243, 241),
+                  child: ListView.builder(
+                    itemCount: runningAddsList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      print("++++++++++++++++++++");
+                      print(runningAddsList[index]);
+                      var instaData = runningAddsList[index]["instaData"];
+                      var ytData = runningAddsList[index]["ytData"];
+                      return Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black, // Set the border color
+                              width: 1.0, // Set the border width
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                child: Center(
+                                  child: Text(
+                                    "${runningAddsList[index]["addData"]["tittle"]}",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Container(
+                                    height: 50,
+                                    width: 50,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(
+                                          2.0), // Adjust the padding as needed
+                                      child: Image.network(
+                                          'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/instagram.png'), // Replace with your image path
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.favorite,
+                                          color: Colors
+                                              .red), // Heart icon for likes
+                                      SizedBox(width: 4), // Add some spacing
+                                      Text(instaData["likes"]
+                                          .toString()), // Display likes count
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  // Display Instagram comments with an icon
+                                  Row(
+                                    children: [
+                                      Icon(Icons.comment,
+                                          color: Colors.blue), // Comment icon
+                                      SizedBox(width: 4),
+                                      Text(instaData["comments"]
+                                          .toString()), // Display comments count
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Container(
+                                    height: 50,
+                                    width: 50,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(2.0),
+                                      child: Image.network(
+                                        'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/youtube_logo.png',
+                                      ),
+                                    ),
+                                  ),
+
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.thumb_up,
+                                          color: Colors
+                                              .blue), // Thumbs-up icon for likes
+                                      SizedBox(width: 4),
+                                      Text(ytData["likeCount"]
+                                          .toString()), // Display likes count
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  // Display YouTube comments with an icon
+                                  Row(
+                                    children: [
+                                      Icon(Icons.comment,
+                                          color: Colors.red), // Comment icon
+                                      SizedBox(width: 4),
+                                      Text(ytData["commentCount"]
+                                          .toString()), // Display comments count
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  // Display YouTube likes with an icon
+                                  Row(
+                                    children: [
+                                      Icon(Icons.remove_red_eye,
+                                          color: Colors.red), // Views icon
+                                      SizedBox(width: 4),
+                                      Text(ytData["viewCount"]
+                                          .toString()), // Display views count
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                            ],
+                          ));
+                    },
+                  ),
+                ),
+              ),
+            ]),
+          ),
+        ),
       ],
     );
   }

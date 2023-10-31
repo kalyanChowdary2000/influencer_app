@@ -21,12 +21,12 @@ class MyApp extends StatelessWidget {
       title: 'INFLU APP',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Colors.purple,
-        hintColor: Colors.pink,
+        primaryColor: Colors.blue,
+        hintColor: Color.fromARGB(255, 65, 161, 236),
         scaffoldBackgroundColor: Colors.white,
         brightness: Brightness.light,
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.pink,
+          backgroundColor: Color.fromARGB(255, 65, 161, 236),
         ),
       ),
       home: RegistrationPage(),

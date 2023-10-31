@@ -223,7 +223,7 @@ class AuthProvider {
         }),
         data: jsonEncode(params),
       );
-      final Map<String, dynamic> data = await decrypt(response.data);
+      final Map<String, dynamic> data = decrypt(response.data);
       return data;
     } catch (e) {
       print("error");
@@ -293,6 +293,28 @@ class AuthProvider {
       var params = {"token": token};
       Response response = await dio.post(
         AppNetworkConstants.apiFetchInfluAdd,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: jsonEncode(params),
+      );
+      final Map<String, dynamic> data = await decrypt(response.data);
+      return data;
+    } catch (e) {
+      print("error");
+      debugPrint(e.toString());
+      return {
+        "success": false,
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> fetchComInfluAdd() async {
+    try {
+      var token = PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
+      var params = {"token": token};
+      Response response = await dio.post(
+        AppNetworkConstants.apiFetchComInfluAdd,
         options: Options(headers: {
           HttpHeaders.contentTypeHeader: "application/json",
         }),

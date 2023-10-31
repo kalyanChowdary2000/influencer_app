@@ -28,6 +28,11 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController _dobController = TextEditingController();
   TextEditingController _genderController = TextEditingController();
   TextEditingController _youtubeController = TextEditingController();
+  TextEditingController _accountHolderNameController = TextEditingController();
+  TextEditingController _accountNumberController = TextEditingController();
+  TextEditingController _branchController = TextEditingController();
+  TextEditingController _bankNameController = TextEditingController();
+  TextEditingController _ifscCodeController = TextEditingController();
 
   bool _isEditing = false;
 
@@ -53,10 +58,20 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  void _saveProfile() {
+  void _saveProfile() async {
     setState(() {
       _isEditing = false;
     });
+    await AuthProvider.editUser(updatedData: {
+      "accountHolderName": _accountHolderNameController.text,
+      "accountNumber": _accountNumberController.text,
+      "bankName": _bankNameController.text,
+      "branch": _branchController.text,
+      "email": _emailController.text,
+      "ifscCode": _ifscCodeController.text,
+      "name": _nameController.text,
+    }, phone: _numberController.text);
+    loadProfile(); // isLoginCheck();
   }
 
   void _selectGender() async {
@@ -107,6 +122,12 @@ class _ProfilePageState extends State<ProfilePage> {
         _numberController.text = userData["_id"];
         _dobController.text = userData["dob"];
         _genderController.text = userData["gender"];
+        _accountNumberController.text = userData?["accountNumber"] ?? '';
+        _ifscCodeController.text = userData?["ifscCode"] ?? '';
+        _branchController.text = userData?["branch"] ?? '';
+        _bankNameController.text = userData?["bankName"] ?? '';
+        _accountHolderNameController.text =
+            userData?["accountHolderName"] ?? '';
         // _youtubeController.text = userData["youtube"];
       });
     }
@@ -122,7 +143,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple,
+        backgroundColor: Color.fromARGB(255, 56, 164, 222),
         title: Text('Profile Page'),
         actions: [
           if (!_isEditing)
@@ -142,196 +163,319 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(
-              height: 20.0,
-            ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                height: 20.0,
+              ),
 
-            GestureDetector(
-              onTap: _isEditing ? _editProfileImage : null,
-              child: CircleAvatar(
-                radius: 75.0,
-                backgroundImage: _imageProvider,
-                // Show an icon if _userImage is null
+              GestureDetector(
+                onTap: _isEditing ? _editProfileImage : null,
+                child: CircleAvatar(
+                  radius: 75.0,
+                  backgroundImage: _imageProvider,
+                  // Show an icon if _userImage is null
+                ),
               ),
-            ),
-            SizedBox(height: 20.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  SizedBox(width: 20.0),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "Name",
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 5,
-                    child: TextFormField(
-                        enabled: _isEditing,
-                        controller: _nameController,
-                        decoration: InputDecoration()),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 10.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  SizedBox(width: 20.0),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "Number",
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 5,
-                    child: TextFormField(
-                        enabled: _isEditing,
-                        controller: _numberController,
-                        decoration: InputDecoration()),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 10.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  SizedBox(width: 20.0),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "Email",
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 5,
-                    child: TextFormField(
-                        enabled: _isEditing,
-                        controller: _emailController,
-                        decoration: InputDecoration()),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 10.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  SizedBox(width: 20.0),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "Date of Birth",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+              SizedBox(height: 20.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Name",
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 5,
-                    child: TextFormField(
-                      enabled: _isEditing,
-                      controller: _dobController,
-                      decoration: InputDecoration(),
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                          enabled: _isEditing,
+                          controller: _nameController,
+                          decoration: InputDecoration()),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 10.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  SizedBox(width: 20.0),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "Gender",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+              SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Number",
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 5,
-                    child: TextFormField(
-                      enabled: _isEditing, // Disable text field for gender
-                      controller: _genderController,
-                      decoration: InputDecoration(),
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                          enabled: _isEditing,
+                          controller: _numberController,
+                          decoration: InputDecoration()),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 10.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  SizedBox(width: 20.0),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "Instagram",
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
+              SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Email",
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 5,
-                    child: TextFormField(
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                          enabled: _isEditing,
+                          controller: _emailController,
+                          decoration: InputDecoration()),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Date of Birth",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
                         enabled: _isEditing,
-                        controller: _instagramController,
-                        decoration: InputDecoration()),
-                  ),
-                ],
+                        controller: _dobController,
+                        decoration: InputDecoration(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 10.0),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(vertical: 8.0),
-            //   child: Row(
-            //     children: [
-            //       SizedBox(width: 20.0),
-            //       Expanded(
-            //         flex: 2,
-            //         child: Text(
-            //           "Youtube",
-            //           style: TextStyle(
-            //               color: Colors.black, fontWeight: FontWeight.bold),
-            //         ),
-            //       ),
-            //       Expanded(
-            //         flex: 5,
-            //         child: TextFormField(
-            //             enabled: _isEditing,
-            //             controller: _youtubeController,
-            //             decoration: InputDecoration()),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-          ],
+              SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Gender",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                        enabled: _isEditing, // Disable text field for gender
+                        controller: _genderController,
+                        decoration: InputDecoration(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Instagram",
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                          enabled: _isEditing,
+                          controller: _instagramController,
+                          decoration: InputDecoration()),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Account Holder Name",
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                          enabled: _isEditing,
+                          controller: _accountHolderNameController,
+                          decoration: InputDecoration()),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Account Number",
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                          enabled: _isEditing,
+                          controller: _accountNumberController,
+                          decoration: InputDecoration()),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Ifsc Code",
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                          enabled: _isEditing,
+                          controller: _ifscCodeController,
+                          decoration: InputDecoration()),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "branch",
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                          enabled: _isEditing,
+                          controller: _branchController,
+                          decoration: InputDecoration()),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "bankName",
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                          enabled: _isEditing,
+                          controller: _bankNameController,
+                          decoration: InputDecoration()),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 10.0),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+              //   child: Row(
+              //     children: [
+              //       SizedBox(width: 20.0),
+              //       Expanded(
+              //         flex: 2,
+              //         child: Text(
+              //           "Youtube",
+              //           style: TextStyle(
+              //               color: Colors.black, fontWeight: FontWeight.bold),
+              //         ),
+              //       ),
+              //       Expanded(
+              //         flex: 5,
+              //         child: TextFormField(
+              //             enabled: _isEditing,
+              //             controller: _youtubeController,
+              //             decoration: InputDecoration()),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+            ],
+          ),
         ),
       ),
     );

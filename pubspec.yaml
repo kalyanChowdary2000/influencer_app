@@ -50,6 +50,7 @@ dependencies:
   fluttertoast: ^8.2.2
   path_provider: ^2.1.1
   flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.5
 
 dev_dependencies:
   flutter_test:
@@ -67,7 +68,20 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "lib/images/logo.jpeg"
+  image_path: "lib/images/logo.jpg"
+flutter_native_splash:
+#  fill: true
+  ios: true
+  android: true
+  image: "lib/images/splash.jpg"
+  color: "#FFFFFF"
+  android_12:
+    image: "lib/images/splash.jpg"
+    color: "#FFFFFF"
+  android_13:
+    image: "lib/images/splash.jpg"
+    color: "#FFFFFF"
+  web: false
 # The following section is specific to Flutter packages.
 flutter:
 
