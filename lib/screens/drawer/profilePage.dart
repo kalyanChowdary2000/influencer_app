@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_final_fields, prefer_const_constructors, unused_local_variable, depend_on_referenced_packages, unused_import
+// ignore_for_file: prefer_final_fields, prefer_const_constructors, unused_local_variable, depend_on_referenced_packages, unused_import, use_build_context_synchronously
 
 import 'dart:convert';
 import 'dart:math';
@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:influ_app/provider/AuthProvider.dart';
 import 'dart:io';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:influ_app/screens/login/register.dart';
 import 'package:influ_app/utils/app_preferences.dart';
 
 import '../../utils/app_constants.dart';
@@ -35,6 +36,46 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController _ifscCodeController = TextEditingController();
 
   bool _isEditing = false;
+  void fetchYoutubeData() async {
+    var data = PreferenceUtils.getString(AppPreferenceConstants.LOGIN_KEY);
+    print('login data is ${data}');
+
+    var youtubeData = await AuthProvider.fetchYoutube();
+    print(youtubeData);
+    print(youtubeData["data"]["_id"]);
+    setState(() {
+      int? fc = int.tryParse(youtubeData["data"]["followerCount"]);
+      _youtubeController.text = youtubeData["data"]["customUrl"];
+    });
+  }
+
+  void _startEditing() {
+    setState(() {
+      _isEditing = true;
+    });
+  }
+
+  void _deleteUser() async {
+    bool res = await AuthProvider.deleteUser(phone: _numberController.text);
+    if (res) {
+      // Navigator.of(context).popUntil((route) => route.)
+      await PreferenceUtils.setInt(
+          AppPreferenceConstants.LOGIN_TIME, 1627376688);
+
+      PreferenceUtils.clearAll();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => RegistrationPage()),
+      );
+    } else {
+      const snackBar = SnackBar(
+        content: Text('Error:try restarting app'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+    // Implement the logic to delete the user account here.
+    // You may show a confirmation dialog before proceeding with the deletion.
+  }
 
   // Function to open an image picker for editing the profile image
   Future<void> _editProfileImage() async {
@@ -56,6 +97,18 @@ class _ProfilePageState extends State<ProfilePage> {
       await AuthProvider.storeProfile(
           imageData: imageBytes, id: _numberController.text);
     }
+  }
+
+  void _cancelEditing() {
+    setState(() {
+      _isEditing = false;
+      // phoneController.text = _mobileNumber;
+      // emailController.text = _email;
+      // nameController.text = _firstName;
+      // stateController.text = _state;
+      // cityController.text = _city;
+      // pincodeController.text = _pincode;
+    });
   }
 
   void _saveProfile() async {
@@ -119,6 +172,7 @@ class _ProfilePageState extends State<ProfilePage> {
         _nameController.text = userData["name"];
         _emailController.text = userData["email"];
         _instagramController.text = userData["instagram"];
+        // _youtubeController.text = userData["youtube"];
         _numberController.text = userData["_id"];
         _dobController.text = userData["dob"];
         _genderController.text = userData["gender"];
@@ -137,6 +191,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     loadProfile();
+    fetchYoutubeData();
   }
 
   @override
@@ -145,22 +200,22 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 56, 164, 222),
         title: Text('Profile Page'),
-        actions: [
-          if (!_isEditing)
-            IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () {
-                setState(() {
-                  _isEditing = true;
-                });
-              },
-            ),
-          if (_isEditing)
-            IconButton(
-              icon: Icon(Icons.save),
-              onPressed: _saveProfile,
-            ),
-        ],
+        // actions: [
+        //   if (!_isEditing)
+        //     IconButton(
+        //       icon: Icon(Icons.edit),
+        //       onPressed: () {
+        //         setState(() {
+        //           _isEditing = true;
+        //         });
+        //       },
+        //     ),
+        //   if (_isEditing)
+        //     IconButton(
+        //       icon: Icon(Icons.save),
+        //       onPressed: _saveProfile,
+        //     ),
+        // ],
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -220,7 +275,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Expanded(
                       flex: 5,
                       child: TextFormField(
-                          enabled: _isEditing,
+                          //enabled: _isEditing,
                           controller: _numberController,
                           decoration: InputDecoration()),
                     ),
@@ -322,8 +377,32 @@ class _ProfilePageState extends State<ProfilePage> {
                     Expanded(
                       flex: 5,
                       child: TextFormField(
-                          enabled: _isEditing,
+                          // enabled: _isEditing,
                           controller: _instagramController,
+                          decoration: InputDecoration()),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Youtube",
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                          // enabled: _isEditing,
+                          controller: _youtubeController,
                           decoration: InputDecoration()),
                     ),
                   ],
@@ -348,6 +427,30 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: TextFormField(
                           enabled: _isEditing,
                           controller: _accountHolderNameController,
+                          decoration: InputDecoration()),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Bank Name",
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                          enabled: _isEditing,
+                          controller: _bankNameController,
                           decoration: InputDecoration()),
                     ),
                   ],
@@ -410,7 +513,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Expanded(
                       flex: 2,
                       child: Text(
-                        "branch",
+                        "Branch Name",
                         style: TextStyle(
                             color: Colors.black, fontWeight: FontWeight.bold),
                       ),
@@ -425,32 +528,45 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
-              SizedBox(height: 10.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Row(
-                  children: [
-                    SizedBox(width: 20.0),
-                    Expanded(
-                      flex: 2,
-                      child: Text(
-                        "bankName",
-                        style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 5,
-                      child: TextFormField(
-                          enabled: _isEditing,
-                          controller: _bankNameController,
-                          decoration: InputDecoration()),
-                    ),
-                  ],
-                ),
-              ),
 
               SizedBox(height: 10.0),
+              _isEditing
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          onPressed: _saveProfile,
+                          child: Text('Save'),
+                        ),
+                        ElevatedButton(
+                          onPressed: _cancelEditing,
+                          child: Text('Cancel'),
+                        ),
+                      ],
+                    )
+                  : ElevatedButton(
+                      onPressed: _startEditing,
+                      child: Text('Edit'),
+                    ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () =>
+                        {}, //_isEditing ? null : _navigateToChangePassword,
+                    child: Text('Change Password'),
+                  ),
+                  ElevatedButton(
+                    onPressed: _deleteUser,
+                    child: Text('Delete User'),
+                    style: ElevatedButton.styleFrom(
+                        primary: const Color.fromARGB(255, 235, 101, 92)),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 30,
+              ),
               // Padding(
               //   padding: const EdgeInsets.symmetric(vertical: 8.0),
               //   child: Row(

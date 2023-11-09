@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_local_variable, await_only_futures, dead_code, library_private_types_in_public_api
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_local_variable, await_only_futures, dead_code, library_private_types_in_public_api, deprecated_member_use
 
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';

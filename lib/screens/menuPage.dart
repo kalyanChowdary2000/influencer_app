@@ -1,10 +1,15 @@
 // ignore_for_file: prefer_const_constructors, library_private_types_in_public_api, prefer_const_literals_to_create_immutables, prefer_final_fields, avoid_unnecessary_containers
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:influ_app/main.dart';
 import 'package:influ_app/screens/BottomBar/completed/completed.dart';
 import 'package:influ_app/screens/BottomBar/mainpage/mainPage.dart';
 import 'package:influ_app/screens/BottomBar/newEnquiry.dart';
 import 'package:influ_app/screens/BottomBar/upComing.dart';
+import 'package:influ_app/utils/app_constants.dart';
+import 'package:influ_app/utils/app_preferences.dart';
 
 import './navDrawer.dart';
 
@@ -27,14 +32,45 @@ class _MenuPageState extends State<MenuPage> {
     });
   }
 
+  void initFirebase() async {
+    var data =
+        await PreferenceUtils.getString(AppPreferenceConstants.LOGIN_KEY);
+    if (data != '') {
+      var userData = json.decode(data);
+      configurePushNotification(userData["_id"]);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initFirebase();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       drawer: NavDrawer(),
       appBar: AppBar(
-        title: Text('INFLU APP'),
         backgroundColor: Color.fromARGB(255, 65, 161, 236),
+        title: Row(
+          children: [
+            Image.network(
+              'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/logo.jpg', // Replace with your logo image path
+              height: 35, // Adjust the height as needed
+              width: 35, // Adjust the width as needed
+            ),
+            SizedBox(width: 8), // Add spacing between the logo and text
+            Text(
+              'Beinfluencer',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
       body: Center(
         child: _widgetOptions.elementAt(selectedIndex),

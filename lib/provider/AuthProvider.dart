@@ -143,6 +143,35 @@ class AuthProvider {
     }
   }
 
+  static Future<bool> deleteUser({
+    required String phone,
+  }) async {
+    try {
+      var token = PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
+      var params = {"_id": phone, "token": token};
+      print(params);
+      Response response = await dio.post(
+        AppNetworkConstants.apiDeleteUser,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: jsonEncode(params),
+      );
+      final Map<String, dynamic> data = await decrypt(response.data);
+      //final data = jsonDecode(response.data);
+      bool isLoginSuccess = data["success"];
+      print("response from server is ${isLoginSuccess}  ${data["data"]}");
+      if (isLoginSuccess) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print("error");
+      debugPrint(e.toString());
+      return false;
+    }
+  }
+
   static Future<Map<String, dynamic>> verifyInstagram(
       {required String username, required String verificationCode}) async {
     try {
@@ -408,6 +437,84 @@ class AuthProvider {
 
       final Map<String, dynamic> data = await decrypt(response.data);
       return CustomResponse(success: "true", data: data);
+    } catch (e) {
+      debugPrint(e.toString());
+      return CustomResponse(success: "false");
+    }
+  }
+
+  static Future<Object> addInstagram({
+    required String username,
+  }) async {
+    try {
+      var token = PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
+      var params = {
+        "username": username,
+        "token": token,
+      };
+
+      Response response = await dio.post(
+        AppNetworkConstants.apiAddInstagram,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: jsonEncode(params),
+      );
+
+      if (response.statusCode == 401) {
+        return CustomResponse(success: "retry");
+      }
+
+      final Map<String, dynamic> data = await decrypt(response.data);
+      bool isLoginSuccess = data["success"];
+      print("-------------------------- updated data ${data}");
+      if (isLoginSuccess) {
+        await PreferenceUtils.setString(
+          AppPreferenceConstants.LOGIN_KEY,
+          json.encode(data["data"]),
+        );
+      }
+      // ToDo : connect to nats
+      return isLoginSuccess;
+    } catch (e) {
+      debugPrint(e.toString());
+      return CustomResponse(success: "false");
+    }
+  }
+
+  static Future<Object> addYoutube({
+    required String youtube,
+  }) async {
+    try {
+      var token = PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
+      var params = {
+        "youtube": youtube,
+        "token": token,
+      };
+
+      Response response = await dio.post(
+        AppNetworkConstants.apiAddYoutube,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: jsonEncode(params),
+      );
+
+      if (response.statusCode == 401) {
+        return CustomResponse(success: "retry");
+      }
+
+      final Map<String, dynamic> data = await decrypt(response.data);
+      bool isLoginSuccess = data["success"];
+      print("-------------------------- updated data ${data}");
+      if (isLoginSuccess) {
+        await PreferenceUtils.setString(
+          AppPreferenceConstants.LOGIN_KEY,
+          json.encode(data["data"]),
+        );
+      }
+      // ToDo : connect to nats
+      return isLoginSuccess;
     } catch (e) {
       debugPrint(e.toString());
       return CustomResponse(success: "false");

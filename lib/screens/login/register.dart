@@ -33,9 +33,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
   Gender _selectedGender = Gender.male;
   DateTime _selectedDate = DateTime.now(); // Selected DOB
   String termsAndConditionsUrl =
-      'https://doc-hosting.flycricket.io/xozone-terms/5aecf027-63e2-4f30-85b1-7c038b7032a5/terms';
+      'https://doc-hosting.flycricket.io/beinfluencer-terms-and-conditions/49735d97-d461-4185-9464-a386da4a7bc9/privacy';
   String privacyPolicyUrl =
-      'https://doc-hosting.flycricket.io/xozone/a4958070-c080-4fcf-b6a2-c113afe522b4/privacy';
+      'https://doc-hosting.flycricket.io/beinfluencer-privacy-policy/8a598136-2ebc-408b-9083-6646e4a1bbc3/privacy';
 
   int _verificationCode = 0;
   bool _instagramFlag = false;
@@ -87,15 +87,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
         gender = 'other';
       }
     }
-    print('Registration Logic Goes Here');
-    print("dob is ${_dobController.text}");
-    print("gender is ${gender}");
-    print("email is ${_emailController.text}");
-    print("password is ${_passwordController.text}");
-    print("name is ${_nameController.text}");
-    print("phone is ${_phoneController.text}");
-    print("instagram is ${_instagramController.text}");
-    print("youtube is ${_youtubeController.text}");
     var response = await AuthProvider.signIn(
         dob: _dobController.text,
         gender: gender,
@@ -313,7 +304,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     //     channelLink: "https://youtube.com/@jennierubyjane?si=WP_5v9S_29tLBwC0",
     //     verificationCode: "Sample");
     if (data != '') {
-      // dispose();
+      //dispose();
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => MenuPage()),
@@ -362,6 +353,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           'Registration Page',
           style: TextStyle(color: Colors.white),
         ),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Padding(

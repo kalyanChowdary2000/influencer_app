@@ -14,7 +14,7 @@ class NavDrawer extends StatefulWidget {
 }
 
 class _NavDrawerState extends State<NavDrawer> {
-  String name = "kalyan";
+  String name = "";
   var imageLink = '';
   void fetchData() async {
     var data =
@@ -44,51 +44,66 @@ class _NavDrawerState extends State<NavDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.all(1.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          DrawerHeader(
-            child: Text(
-              name,
-              style: TextStyle(color: Colors.white, fontSize: 25),
-            ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 500, // Set the desired height
             decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 224, 226, 224),
-                image: DecorationImage(
-                    fit: BoxFit.fitWidth,
-                    image: NetworkImage(
-                        "${imageLink}?timestamp=${DateTime.now().millisecondsSinceEpoch}"))),
+              color: const Color.fromARGB(255, 224, 226, 224),
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(
+                    "${imageLink}?timestamp=${DateTime.now().millisecondsSinceEpoch}"),
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // SizedBox(
+                //   width: 10,
+                // ),
+                Text(
+                  "   $name",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
           ),
           ListTile(
             leading: Icon(Icons.verified_user),
             title: Text('Profile'),
-            onTap: () => {
-              // destroy(),
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ProfilePage()),
-              )
+              );
             },
           ),
           ListTile(
             leading: Icon(Icons.settings),
             title: Text('Settings'),
-            onTap: () => {
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SettingPage()),
-              )
+              );
             },
           ),
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
-            onTap: () => {
-              PreferenceUtils.clearAll(),
+            onTap: () {
+              PreferenceUtils.clearAll();
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => RegistrationPage()),
-              )
+              );
             },
           ),
         ],
