@@ -57,17 +57,27 @@ class _RegistrationPageState extends State<RegistrationPage> {
     final passwordNotEmpty = _passwordController.text.isNotEmpty;
     final genderSelected = _selectedGender != null;
     final dobSelected = _selectedDate != null; // Check if DOB is selected
-
-    setState(() {
-      _isRegisterButtonEnabled = _instagramFlag ||
-          _youtubeFlag &&
-              phoneNotEmpty &&
-              emailNotEmpty &&
-              nameNotEmpty &&
-              passwordNotEmpty &&
-              genderSelected &&
-              dobSelected; // A
-    });
+    if (_instagramFlag || _youtubeFlag) {
+      if (phoneNotEmpty &&
+          emailNotEmpty &&
+          nameNotEmpty &&
+          passwordNotEmpty &&
+          genderSelected &&
+          dobSelected &&
+          _isChecked) {
+        setState(() {
+          _isRegisterButtonEnabled = true;
+        });
+      } else {
+        setState(() {
+          _isRegisterButtonEnabled = false;
+        });
+      }
+    } else {
+      setState(() {
+        _isRegisterButtonEnabled = false;
+      });
+    }
   }
 
   void _togglePasswordVisibility() {
@@ -264,7 +274,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             _isVerified = authResponse['success'];
                           });
                           if (_isVerified) {
-                            _instagramFlag = true;
+                            setState(() {
+                              _instagramFlag = true;
+                            });
+
                             _updateRegisterButtonState();
                             // Set the button to green with "Verified" text
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -362,6 +375,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             children: <Widget>[
               SizedBox(height: 20.0),
               TextFormField(
+                keyboardType: TextInputType.number,
                 controller: _phoneController,
                 decoration: InputDecoration(
                   labelText: 'Phone',
@@ -500,16 +514,27 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   SizedBox(
                       width:
                           10.0), // Add some spacing between the TextFormField and the button
-                  ElevatedButton(
-                    onPressed: () {
-                      _instagramController.text.isNotEmpty
-                          ? instagramDialog()
-                          : null;
-                    },
-                    child: Text('verify Id'),
-                    style: ElevatedButton.styleFrom(
-                        primary: Color.fromARGB(255, 65, 161, 236)),
-                  ),
+                  _instagramFlag
+                      ? ElevatedButton(
+                          onPressed: () {
+                            _instagramController.text.isNotEmpty
+                                ? instagramDialog()
+                                : null;
+                          },
+                          child: Text('verified✅'),
+                          style: ElevatedButton.styleFrom(
+                              primary: Color.fromARGB(255, 12, 125, 12)),
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
+                            _instagramController.text.isNotEmpty
+                                ? instagramDialog()
+                                : null;
+                          },
+                          child: Text('verify Id'),
+                          style: ElevatedButton.styleFrom(
+                              primary: Color.fromARGB(255, 65, 161, 236)),
+                        ),
                 ],
               ),
               SizedBox(height: 20.0),
@@ -537,16 +562,27 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   SizedBox(
                       width:
                           10.0), // Add some spacing between the TextFormField and the button
-                  ElevatedButton(
-                    onPressed: () {
-                      _youtubeController.text.isNotEmpty
-                          ? youtubeDialog()
-                          : null;
-                    },
-                    child: Text('verify Id'),
-                    style: ElevatedButton.styleFrom(
-                        primary: Color.fromARGB(255, 65, 161, 236)),
-                  ),
+                  _youtubeFlag
+                      ? ElevatedButton(
+                          onPressed: () {
+                            _instagramController.text.isNotEmpty
+                                ? instagramDialog()
+                                : null;
+                          },
+                          child: Text('verified✅'),
+                          style: ElevatedButton.styleFrom(
+                              primary: Color.fromARGB(255, 12, 125, 12)),
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
+                            _youtubeController.text.isNotEmpty
+                                ? youtubeDialog()
+                                : null;
+                          },
+                          child: Text('verify Id'),
+                          style: ElevatedButton.styleFrom(
+                              primary: Color.fromARGB(255, 65, 161, 236)),
+                        ),
                 ],
               ),
               SizedBox(height: 20.0),
@@ -680,6 +716,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         setState(() {
                           _isChecked = value!;
                         });
+                        _updateRegisterButtonState();
                       },
                     ),
                     Text("I have read and agree to the "),

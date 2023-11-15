@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:influ_app/provider/AuthProvider.dart';
 import 'dart:io';
@@ -59,8 +60,8 @@ class _ProfilePageState extends State<ProfilePage> {
     bool res = await AuthProvider.deleteUser(phone: _numberController.text);
     if (res) {
       // Navigator.of(context).popUntil((route) => route.)
-      await PreferenceUtils.setInt(
-          AppPreferenceConstants.LOGIN_TIME, 1627376688);
+      // await PreferenceUtils.setInt(
+      //     AppPreferenceConstants.LOGIN_TIME, 1627376688);
 
       PreferenceUtils.clearAll();
       Navigator.push(
@@ -275,9 +276,16 @@ class _ProfilePageState extends State<ProfilePage> {
                     Expanded(
                       flex: 5,
                       child: TextFormField(
-                          //enabled: _isEditing,
-                          controller: _numberController,
-                          decoration: InputDecoration()),
+                        enabled: false,
+                        keyboardType: TextInputType.number,
+                        controller: _numberController,
+                        decoration: InputDecoration(
+                          labelText: "Number",
+                        ),
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -377,7 +385,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Expanded(
                       flex: 5,
                       child: TextFormField(
-                          // enabled: _isEditing,
+                          enabled: false,
                           controller: _instagramController,
                           decoration: InputDecoration()),
                     ),
@@ -401,7 +409,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Expanded(
                       flex: 5,
                       child: TextFormField(
-                          // enabled: _isEditing,
+                          enabled: false,
                           controller: _youtubeController,
                           decoration: InputDecoration()),
                     ),

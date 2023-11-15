@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -28,7 +30,7 @@ class _PaymentPageState extends State<PaymentPage> {
     print("Verify Payment ");
     var token =
         await PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
-    await AuthProvider.addTransaction(token: token, amount: amount);
+    //await AuthProvider.addTransaction(token: token, amount: amount);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => MenuPage()),

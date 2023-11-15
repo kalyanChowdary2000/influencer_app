@@ -416,11 +416,23 @@ class AuthProvider {
   static Future<CustomResponse> addTransaction({
     required String token,
     required double amount,
+    required bool isDeposit,
+    required String accountHolderName,
+    required String accountNumber,
+    required String ifscCode,
+    required String branch,
+    required String bankName,
   }) async {
     try {
       var params = {
         "amount": amount,
         "token": token,
+        "isDeposit": false,
+        "accountHolderName": accountHolderName, // Provide the value if needed
+        "accountNumber": accountNumber, // Provide the value if needed
+        "ifscCode": ifscCode, // Provide the value if needed
+        "branch": branch, // Provide the value if needed
+        "bankName": bankName,
       };
 
       Response response = await dio.post(
@@ -518,6 +530,80 @@ class AuthProvider {
     } catch (e) {
       debugPrint(e.toString());
       return CustomResponse(success: "false");
+    }
+  }
+
+  static Future<Map<String, dynamic>> fetchWallet(
+      {required String token}) async {
+    try {
+      var params = {"token": token};
+      Response response = await dio.post(
+        AppNetworkConstants.apiFetchWallet,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: jsonEncode(params),
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = await decrypt(response.data);
+        //final data = jsonDecode(response.data);
+        bool isLoginSuccess = data["success"];
+        print("response from server is ${isLoginSuccess}  ${data["data"]}");
+        if (isLoginSuccess) {
+          await PreferenceUtils.setString(
+            AppPreferenceConstants.LOGIN_KEY,
+            json.encode(data["data"]),
+          );
+          await PreferenceUtils.setString(
+            AppPreferenceConstants.TOKEN_KEY,
+            data["token"],
+          );
+          return {
+            "success": true,
+          };
+        }
+        return {
+          "success": false,
+        };
+      } else {
+        return {"success": "retry"};
+      }
+      // ToDo : connect to nats
+    } catch (e) {
+      print("error");
+      debugPrint(e.toString());
+      return {
+        "success": false,
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> fetchTransaction(
+      {required String token}) async {
+    try {
+      var params = {"token": token};
+      Response response = await dio.post(
+        AppNetworkConstants.apiFetchTransaction,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: jsonEncode(params),
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = await decrypt(response.data);
+        //final data = jsonDecode(response.data);
+
+        return {"success": true, "data": data["data"]};
+      }
+      return {
+        "success": false,
+      };
+    } catch (e) {
+      print("error");
+      debugPrint(e.toString());
+      return {
+        "success": false,
+      };
     }
   }
 }

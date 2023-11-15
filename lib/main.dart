@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, unused_import
 
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
@@ -13,6 +14,7 @@ import 'package:influ_app/utils/app_constants.dart';
 import 'package:influ_app/utils/app_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:provider/provider.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -39,7 +41,10 @@ void main() async {
       print("Firebase Initialized");
     });
   }
-  runApp(MyApp());
+
+  runApp(
+    MyApp(),
+  );
 }
 
 class MyApp extends StatefulWidget {

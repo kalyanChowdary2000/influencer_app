@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:influ_app/provider/AuthProvider.dart';
 import 'package:influ_app/screens/BottomBar/mainpage/catergories.dart';
+import 'package:influ_app/screens/menuPage.dart';
 import 'package:influ_app/utils/app_constants.dart';
 import 'package:influ_app/utils/app_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -50,10 +51,10 @@ class _MainPageState extends State<MainPage> {
 
   void fetchInstagramData() async {
     var data = PreferenceUtils.getString(AppPreferenceConstants.LOGIN_KEY);
-    print('login data is ${data}');
+    print('login data is -------- ${data}');
 
     var instagramData = await AuthProvider.fetchInstagram();
-    print(instagramData);
+    print("intagram data is --------${instagramData}");
     if (instagramData["data"].length != 0) {
       setState(() {
         instagramId = instagramData["data"]["_id"];
@@ -74,7 +75,7 @@ class _MainPageState extends State<MainPage> {
     var youtubeData = await AuthProvider.fetchYoutube();
     print(youtubeData);
 
-    if (youtubeData["data"].length != 0) {
+    if (youtubeData["data"] && youtubeData["data"].length != 0) {
       setState(() {
         int? fc = int.tryParse(youtubeData["data"]["followerCount"]);
         youtubeId = youtubeData["data"]["customUrl"];
@@ -92,7 +93,7 @@ class _MainPageState extends State<MainPage> {
   void fetchRunningAdds() async {
     var data = await AuthProvider.fetchComInfluAdd();
     print("==========================================================");
-    print(data["data"].length);
+    //print(data["data"].length);
     setState(() {
       runningAddsList = data["data"];
     });
@@ -131,281 +132,384 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Expanded(
             flex: 3,
-            child: Row(children: [
-              Expanded(
-                  flex: 6,
-                  child: Container(
-                    color: Colors.white,
-                    child: Column(children: [
-                      SizedBox(
-                        height: 20,
+            child: Container(
+              color: Colors.white,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Container(
+                        child: Text(
+                          "Social Media Manager",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
                       ),
-                      Center(
-                        child: Container(
-                          child: Text(
-                            "Social Media Manager",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    !instagramFlag
+                        ? Center(
+                            child: ElevatedButton(
+                                onPressed: () async {
+                                  final accountId = await showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return LinkInstagramDialog(
+                                          refreshCallback:
+                                              refreshInstagramData);
+                                    },
+                                  );
+
+                                  if (accountId != null) {
+                                    // Process the 'accountId' (Instagram ID) as needed.
+                                    // You can make an API request to link the account.
+                                  }
+                                },
+                                child: Text("Link Instagram")),
+                          )
+                        : SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(width: 10),
+                                GestureDetector(
+                                  onTap: () async {
+                                    await launchUrl(Uri.parse(
+                                        '${AppPreferenceConstants.appInstaPromoUrl}${instagramId}'));
+                                    print("insta tap");
+                                  },
+                                  child: Container(
+                                    height: 50,
+                                    width: 50,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(
+                                          2.0), // Adjust the padding as needed
+                                      child: Image.network(
+                                          'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/instagram.png'), // Replace with your image path
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Column(
+                                  children: [
+                                    Container(
+                                      child: Text(
+                                        "${followersCount}",
+                                        style: TextStyle(
+                                            color: const Color.fromARGB(
+                                                255, 213, 68, 117),
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        "Followers",
+                                        style: TextStyle(
+                                            color: const Color.fromARGB(
+                                                255, 213, 68, 117),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 20),
+                                Column(
+                                  children: [
+                                    Container(
+                                      child: Text(
+                                        "${engagementRate}",
+                                        style: TextStyle(
+                                            color: const Color.fromARGB(
+                                                255, 213, 68, 117),
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        "Engagement\nRate",
+                                        style: TextStyle(
+                                            color: const Color.fromARGB(
+                                                255, 213, 68, 117),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 20),
+                                Column(
+                                  children: [
+                                    Container(
+                                      child: Text(
+                                        "${reach}",
+                                        style: TextStyle(
+                                            color: const Color.fromARGB(
+                                                255, 213, 68, 117),
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        "Reach",
+                                        style: TextStyle(
+                                            color: const Color.fromARGB(
+                                                255, 213, 68, 117),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            SizedBox(width: 10),
-                            GestureDetector(
-                              onTap: () async {
-                                await launchUrl(Uri.parse(
-                                    '${AppPreferenceConstants.appInstaPromoUrl}${instagramId}'));
-                                print("insta tap");
-                              },
-                              child: Container(
-                                height: 50,
-                                width: 50,
-                                child: Padding(
-                                  padding: EdgeInsets.all(
-                                      2.0), // Adjust the padding as needed
-                                  child: Image.network(
-                                      'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/instagram.png'), // Replace with your image path
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Column(
-                              children: [
-                                Container(
-                                  child: Text(
-                                    "${followersCount}",
-                                    style: TextStyle(
-                                        color: const Color.fromARGB(
-                                            255, 213, 68, 117),
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Container(
-                                  child: Text(
-                                    "Followers",
-                                    style: TextStyle(
-                                        color: const Color.fromARGB(
-                                            255, 213, 68, 117),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(width: 20),
-                            Column(
-                              children: [
-                                Container(
-                                  child: Text(
-                                    "${engagementRate}",
-                                    style: TextStyle(
-                                        color: const Color.fromARGB(
-                                            255, 213, 68, 117),
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Container(
-                                  child: Text(
-                                    "Engagement\nRate",
-                                    style: TextStyle(
-                                        color: const Color.fromARGB(
-                                            255, 213, 68, 117),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            SizedBox(width: 10),
-                            GestureDetector(
-                              onTap: () async {
-                                await launchUrl(Uri.parse(
-                                    '${AppPreferenceConstants.appYoutubePromoUrl}${youtubeId}'));
-                                print("youtube tap");
-                              },
-                              child: Container(
-                                height: 50,
-                                width: 50,
-                                child: Padding(
-                                  padding: EdgeInsets.all(
-                                      2.0), // Adjust the padding as needed
-                                  child: Image.network(
-                                      'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/youtube_logo.png'), // Replace with your image path
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Column(
-                              children: [
-                                Container(
-                                  child: Text(
-                                    "${youtubeFollowersCount}",
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 219, 49, 49),
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Container(
-                                  child: Text(
-                                    "Subscribers",
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 219, 49, 49),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(width: 20),
-                            Column(
-                              children: [
-                                Container(
-                                  child: Text(
-                                    "${youtubeEngagementRate}",
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 219, 49, 49),
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Container(
-                                  child: Text(
-                                    "Engagement\nRate",
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 219, 49, 49),
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ]),
-                  )),
-              Expanded(
-                  flex: 4,
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Container(
-                        child: Text(
-                          "${formatFollowerCount((reach + youtubeReach) as int)}",
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 155, 42, 80),
-                              fontSize: 48,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          "Overall Reach",
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 160, 38, 79),
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      instagramFlag
-                          ? SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height: 25,
-                                    width: 25,
-                                    child: Image.network(
-                                        "https://azhanaresources.s3.ap-south-1.amazonaws.com/images/instagram.png"),
-                                  ),
-                                  Container(
-                                    child: Text("@${instagramId}"),
-                                  )
-                                ],
-                              ),
-                            )
-                          : ElevatedButton(
-                              onPressed: () async {
-                                final accountId = await showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return LinkInstagramDialog(
-                                        refreshCallback: refreshInstagramData);
-                                  },
-                                );
+                    SizedBox(
+                      height: 10,
+                    ),
+                    !youtubeFlag
+                        ? Center(
+                            child: ElevatedButton(
+                                onPressed: () async {
+                                  final accountId = await showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return LinkYoutubeDialog(
+                                          refreshCallback: refreshYoutubeData);
+                                    },
+                                  );
 
-                                if (accountId != null) {
-                                  // Process the 'accountId' (Instagram ID) as needed.
-                                  // You can make an API request to link the account.
-                                }
-                              },
-                              child: Text("Link Instagram")),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      youtubeFlag
-                          ? SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height: 25,
-                                    width: 25,
-                                    child: Image.network(
-                                        "https://azhanaresources.s3.ap-south-1.amazonaws.com/images/youtube_logo.png"),
-                                  ),
-                                  Container(
-                                    child: Text("${youtubeId}"),
-                                  )
-                                ],
-                              ),
-                            )
-                          : ElevatedButton(
-                              onPressed: () async {
-                                final accountId = await showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return LinkYoutubeDialog(
-                                        refreshCallback: refreshYoutubeData);
+                                  if (accountId != null) {
+                                    // Process the 'accountId' (YouTube ID) as needed.
+                                    // You can make an API request to link the account.
+                                  }
+                                },
+                                child: Text("Link Youtube")),
+                          )
+                        : SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              // //crossAxisAlignment: CrossAxisAlignment.center,
+                              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                SizedBox(width: 10),
+                                GestureDetector(
+                                  onTap: () async {
+                                    await launchUrl(Uri.parse(
+                                        '${AppPreferenceConstants.appYoutubePromoUrl}${youtubeId}'));
+                                    print("youtube tap");
                                   },
-                                );
+                                  child: Container(
+                                    height: 50,
+                                    width: 50,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(
+                                          2.0), // Adjust the padding as needed
+                                      child: Image.network(
+                                          'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/youtube_logo.png'), // Replace with your image path
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Column(
+                                  children: [
+                                    Container(
+                                      child: Text(
+                                        "${youtubeFollowersCount}",
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 219, 49, 49),
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        "Subscribers",
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 219, 49, 49),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 20),
+                                Column(
+                                  children: [
+                                    Container(
+                                      child: Text(
+                                        "${youtubeEngagementRate}",
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 219, 49, 49),
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        "Engagement\nRate",
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 219, 49, 49),
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 20),
+                                Column(
+                                  children: [
+                                    Container(
+                                      child: Text(
+                                        "${youtubeReach}",
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 219, 49, 49),
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        "Reach",
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 219, 49, 49),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ]),
+            )),
+        // Expanded(
+        //     flex: 4,
+        //     child: Column(
+        //       children: [
+        //         SizedBox(
+        //           height: 30,
+        //         ),
+        //         Container(
+        //           child: Text(
+        //             "${formatFollowerCount((reach + youtubeReach) as int)}",
+        //             style: TextStyle(
+        //                 color: Color.fromARGB(255, 155, 42, 80),
+        //                 fontSize: 48,
+        //                 fontWeight: FontWeight.bold),
+        //           ),
+        //         ),
+        //         Container(
+        //           child: Text(
+        //             "Overall Reach",
+        //             style: TextStyle(
+        //                 color: Color.fromARGB(255, 160, 38, 79),
+        //                 fontSize: 18,
+        //                 fontWeight: FontWeight.bold),
+        //           ),
+        //         ),
+        //         SizedBox(
+        //           height: 5,
+        //         ),
+        //         instagramFlag
+        //             ? SingleChildScrollView(
+        //                 scrollDirection: Axis.horizontal,
+        //                 child: Row(
+        //                   children: [
+        //                     Container(
+        //                       height: 25,
+        //                       width: 25,
+        //                       child: Image.network(
+        //                           "https://azhanaresources.s3.ap-south-1.amazonaws.com/images/instagram.png"),
+        //                     ),
+        //                     Container(
+        //                       child: Text("@${instagramId}"),
+        //                     )
+        //                   ],
+        //                 ),
+        //               )
+        //             : ElevatedButton(
+        //                 onPressed: () async {
+        //                   final accountId = await showDialog(
+        //                     context: context,
+        //                     builder: (context) {
+        //                       return LinkInstagramDialog(
+        //                           refreshCallback: refreshInstagramData);
+        //                     },
+        //                   );
 
-                                if (accountId != null) {
-                                  // Process the 'accountId' (YouTube ID) as needed.
-                                  // You can make an API request to link the account.
-                                }
-                              },
-                              child: Text("Link Youtube"))
-                    ],
-                  ))
-            ])),
+        //                   if (accountId != null) {
+        //                     // Process the 'accountId' (Instagram ID) as needed.
+        //                     // You can make an API request to link the account.
+        //                   }
+        //                 },
+        //                 child: Text("Link Instagram")),
+        //         SizedBox(
+        //           height: 5,
+        //         ),
+        //         youtubeFlag
+        //             ? SingleChildScrollView(
+        //                 scrollDirection: Axis.horizontal,
+        //                 child: Row(
+        //                   children: [
+        //                     Container(
+        //                       height: 25,
+        //                       width: 25,
+        //                       child: Image.network(
+        //                           "https://azhanaresources.s3.ap-south-1.amazonaws.com/images/youtube_logo.png"),
+        //                     ),
+        //                     Container(
+        //                       child: Text("${youtubeId}"),
+        //                     )
+        //                   ],
+        //                 ),
+        //               )
+        //             : ElevatedButton(
+        //                 onPressed: () async {
+        //                   final accountId = await showDialog(
+        //                     context: context,
+        //                     builder: (context) {
+        //                       return LinkYoutubeDialog(
+        //                           refreshCallback: refreshYoutubeData);
+        //                     },
+        //                   );
+
+        //                   if (accountId != null) {
+        //                     // Process the 'accountId' (YouTube ID) as needed.
+        //                     // You can make an API request to link the account.
+        //                   }
+        //                 },
+        //                 child: Text("Link Youtube"))
+        //       ],
+        //     ))
+
         Expanded(
             child: GestureDetector(
               onTap: () {
@@ -446,8 +550,8 @@ class _MainPageState extends State<MainPage> {
               ),
               Container(
                 child: Text(
-                  "My Campaigns",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  "My Running Campaigns",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                 ),
               ),
               SizedBox(
@@ -460,20 +564,28 @@ class _MainPageState extends State<MainPage> {
                         child: Text("You Don't Have Any Campaigns Yet"),
                       ))
                     : Container(
-                        color: Color.fromARGB(255, 243, 243, 241),
+                        color: Colors.white,
                         child: ListView.builder(
                           itemCount: runningAddsList.length,
                           itemBuilder: (BuildContext context, int index) {
                             print("++++++++++++++++++++");
                             print(runningAddsList[index]);
+                            bool ytLogs = false;
+                            bool instaLogs = false;
+                            if (runningAddsList[index]["instaData"] != null) {
+                              instaLogs = true;
+                            }
                             var instaData = runningAddsList[index]["instaData"];
+                            if (runningAddsList[index]["ytData"] != null) {
+                              ytLogs = true;
+                            }
                             var ytData = runningAddsList[index]["ytData"];
-                            return Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.black, // Set the border color
-                                    width: 1.0, // Set the border width
-                                  ),
+                            return Card(
+                                color: Color.fromARGB(255, 232, 245, 246),
+                                elevation: 4,
+                                clipBehavior: Clip.antiAlias,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Column(
                                   mainAxisAlignment:
@@ -496,117 +608,128 @@ class _MainPageState extends State<MainPage> {
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        Container(
-                                          height: 50,
-                                          width: 50,
-                                          child: Padding(
-                                            padding: EdgeInsets.all(
-                                                2.0), // Adjust the padding as needed
-                                            child: Image.network(
-                                                'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/instagram.png'), // Replace with your image path
+                                    !instaLogs
+                                        ? Center(
+                                            child: Text(
+                                                "instagram is not linke dto this ad"),
+                                          )
+                                        : Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Container(
+                                                height: 50,
+                                                width: 50,
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(
+                                                      2.0), // Adjust the padding as needed
+                                                  child: Image.network(
+                                                      'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/instagram.png'), // Replace with your image path
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.favorite,
+                                                      color: Colors
+                                                          .red), // Heart icon for likes
+                                                  SizedBox(
+                                                      width:
+                                                          4), // Add some spacing
+                                                  Text(instaData["likes"]
+                                                      .toString()), // Display likes count
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              // Display Instagram comments with an icon
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.comment,
+                                                      color: Colors
+                                                          .blue), // Comment icon
+                                                  SizedBox(width: 4),
+                                                  Text(instaData["comments"]
+                                                      .toString()), // Display comments count
+                                                ],
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Icon(Icons.favorite,
-                                                color: Colors
-                                                    .red), // Heart icon for likes
-                                            SizedBox(
-                                                width: 4), // Add some spacing
-                                            Text(instaData["likes"]
-                                                .toString()), // Display likes count
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        // Display Instagram comments with an icon
-                                        Row(
-                                          children: [
-                                            Icon(Icons.comment,
-                                                color: Colors
-                                                    .blue), // Comment icon
-                                            SizedBox(width: 4),
-                                            Text(instaData["comments"]
-                                                .toString()), // Display comments count
-                                          ],
-                                        ),
-                                      ],
-                                    ),
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        Container(
-                                          height: 50,
-                                          width: 50,
-                                          child: Padding(
-                                            padding: EdgeInsets.all(2.0),
-                                            child: Image.network(
-                                              'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/youtube_logo.png',
-                                            ),
-                                          ),
-                                        ),
+                                    !ytLogs
+                                        ? Center(
+                                            child: Text(
+                                                "youtube is not linke dto this ad"),
+                                          )
+                                        : Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Container(
+                                                height: 50,
+                                                width: 50,
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(2.0),
+                                                  child: Image.network(
+                                                    'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/youtube_logo.png',
+                                                  ),
+                                                ),
+                                              ),
 
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Icon(Icons.thumb_up,
-                                                color: Colors
-                                                    .blue), // Thumbs-up icon for likes
-                                            SizedBox(width: 4),
-                                            Text(ytData["likeCount"]
-                                                .toString()), // Display likes count
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        // Display YouTube comments with an icon
-                                        Row(
-                                          children: [
-                                            Icon(Icons.comment,
-                                                color:
-                                                    Colors.red), // Comment icon
-                                            SizedBox(width: 4),
-                                            Text(ytData["commentCount"]
-                                                .toString()), // Display comments count
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        // Display YouTube likes with an icon
-                                        Row(
-                                          children: [
-                                            Icon(Icons.remove_red_eye,
-                                                color:
-                                                    Colors.red), // Views icon
-                                            SizedBox(width: 4),
-                                            Text(ytData["viewCount"]
-                                                .toString()), // Display views count
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.thumb_up,
+                                                      color: Colors
+                                                          .blue), // Thumbs-up icon for likes
+                                                  SizedBox(width: 4),
+                                                  Text(ytData["likeCount"]
+                                                      .toString()), // Display likes count
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              // Display YouTube comments with an icon
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.comment,
+                                                      color: Colors
+                                                          .red), // Comment icon
+                                                  SizedBox(width: 4),
+                                                  Text(ytData["commentCount"]
+                                                      .toString()), // Display comments count
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              // Display YouTube likes with an icon
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.remove_red_eye,
+                                                      color: Colors
+                                                          .red), // Views icon
+                                                  SizedBox(width: 4),
+                                                  Text(ytData["viewCount"]
+                                                      .toString()), // Display views count
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                     SizedBox(
                                       height: 10,
                                     ),

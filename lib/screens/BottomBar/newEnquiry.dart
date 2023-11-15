@@ -88,166 +88,171 @@ class _NewEnquiryPageState extends State<NewEnquiryPage> {
       }
     }
 
-    return Card(
-      color: Color.fromARGB(255, 243, 243, 241),
-      elevation: 4,
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: [
-          ListTile(
-            title: Center(
-              child: Flexible(
-                child: Text(
-                  myAddsList['tittle'],
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
+    return InkWell(
+      onTap: () {
+        // _navigateToProductDetailPage(product);
+      },
+      child: Card(
+        color: Color.fromARGB(255, 249, 249, 249),
+        elevation: 4,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            ListTile(
+              title: Center(
+                child: Flexible(
+                  child: Text(
+                    myAddsList['tittle'],
+                    style: const TextStyle(
+                      fontSize: 18.0,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 16.0,
-            ),
-            child: Column(
-              children: [
-                Text(
-                  myAddsList['description'],
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "Downloadable Media Links",
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: linkWidgets,
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text("Platforms :"),
-              myAddsList['instaFlag']
-                  ? Container(
-                      height: 60,
-                      width: 60,
-                      child: Padding(
-                        padding: EdgeInsets.all(2.0),
-                        child: Image.network(
-                            'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/instagram.png'),
-                      ),
-                    )
-                  : Text(""),
-              myAddsList['ytFlag']
-                  ? Container(
-                      height: 60,
-                      width: 60,
-                      child: Padding(
-                        padding: EdgeInsets.all(2.0),
-                        child: Image.network(
-                            'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/youtube_logo.png'),
-                      ),
-                    )
-                  : Text(""),
-            ],
-          ),
-          Container(
-            color: Colors.white,
-            margin: const EdgeInsets.symmetric(vertical: 20),
-            height: 200,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
+              ),
+              child: Column(
                 children: [
-                  SizedBox(
-                    width: 20,
+                  Text(
+                    myAddsList['description'],
                   ),
-                  ...imageWidgets,
-                  ...videoWidgets,
+                  SizedBox(height: 10),
+                  Text(
+                    "Downloadable Media Links",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: linkWidgets,
+                  ),
                 ],
               ),
             ),
-          ),
-          Center(
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                      Color.fromARGB(255, 65, 161, 236)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text("Platforms :"),
+                myAddsList['instaFlag']
+                    ? Container(
+                        height: 60,
+                        width: 60,
+                        child: Padding(
+                          padding: EdgeInsets.all(2.0),
+                          child: Image.network(
+                              'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/instagram.png'),
+                        ),
+                      )
+                    : Text(""),
+                myAddsList['ytFlag']
+                    ? Container(
+                        height: 60,
+                        width: 60,
+                        child: Padding(
+                          padding: EdgeInsets.all(2.0),
+                          child: Image.network(
+                              'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/youtube_logo.png'),
+                        ),
+                      )
+                    : Text(""),
+              ],
+            ),
+            Container(
+              color: Colors.white,
+              margin: const EdgeInsets.symmetric(vertical: 20),
+              height: 200,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 20,
+                    ),
+                    ...imageWidgets,
+                    ...videoWidgets,
+                  ],
                 ),
-                onPressed: () {
-                  _copyDescriptionToClipboard(myAddsList['description']);
-                },
-                child: Text("Copy Description"),
               ),
             ),
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: isInstagramVerified && isYouTubeVerified
-                ? ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.green),
-                      // You can adjust other properties like padding, shape, etc. as needed.
-                    ),
-                    onPressed: () {
-                      // Handle the action when the posts are already verified
-                      // For example, you can show a message or perform a different action.
-                    },
-                    child: Text("Verified"),
-                  )
-                : ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Color.fromARGB(
-                          255,
-                          65,
-                          161,
-                          236)), // Set the background color to pink
-                      // You can adjust other properties like padding, shape, etc. as needed.
-                    ),
-                    onPressed: () async {
-                      setState(() {
-                        isInstagramVerified = false;
-                        isYouTubeVerified = false;
-                      });
-                      var verificationResponse =
-                          await AuthProvider.verifyAdd(myAddsList["tittle"]);
+            Center(
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        Color.fromARGB(255, 65, 161, 236)),
+                  ),
+                  onPressed: () {
+                    _copyDescriptionToClipboard(
+                        "${myAddsList['description']}-${myAddsList["_id"]}");
+                  },
+                  child: Text("Copy Description"),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: isInstagramVerified && isYouTubeVerified
+                  ? ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.green),
+                        // You can adjust other properties like padding, shape, etc. as needed.
+                      ),
+                      onPressed: () {
+                        // Handle the action when the posts are already verified
+                        // For example, you can show a message or perform a different action.
+                      },
+                      child: Text("Verified"),
+                    )
+                  : ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            Color.fromARGB(255, 65, 161,
+                                236)), // Set the background color to pink
+                        // You can adjust other properties like padding, shape, etc. as needed.
+                      ),
+                      onPressed: () async {
+                        setState(() {
+                          isInstagramVerified = false;
+                          isYouTubeVerified = false;
+                        });
+                        var verificationResponse =
+                            await AuthProvider.verifyAdd(myAddsList["_id"]);
 
-                      if (verificationResponse['instaFlag']) {
-                        setState(() {
-                          isInstagramVerified = true;
-                        });
-                        print("----------------instagram verified");
-                      }
-                      if (verificationResponse['ytFlag']) {
-                        setState(() {
-                          isYouTubeVerified = true;
-                        });
-                        print("----------------------yt verified");
-                      }
-                      // verifyAdd(myAddsList["tittle"]);
-                    },
-                    child: isInstagramVerified || isYouTubeVerified
-                        ? CircularProgressIndicator() // Show a loading indicator when verifying
-                        : Text("Verify my post"),
-                  ), // Button based on verification status
-          )
-        ],
+                        if (verificationResponse['instaFlag']) {
+                          setState(() {
+                            isInstagramVerified = true;
+                          });
+                          print("----------------instagram verified");
+                        }
+                        if (verificationResponse['ytFlag']) {
+                          setState(() {
+                            isYouTubeVerified = true;
+                          });
+                          print("----------------------yt verified");
+                        }
+                        // verifyAdd(myAddsList["tittle"]);
+                      },
+                      child: isInstagramVerified || isYouTubeVerified
+                          ? CircularProgressIndicator() // Show a loading indicator when verifying
+                          : Text("Verify my post"),
+                    ), // Button based on verification status
+            )
+          ],
+        ),
       ),
     );
   }

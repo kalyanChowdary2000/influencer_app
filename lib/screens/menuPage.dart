@@ -1,13 +1,16 @@
 // ignore_for_file: prefer_const_constructors, library_private_types_in_public_api, prefer_const_literals_to_create_immutables, prefer_final_fields, avoid_unnecessary_containers
 
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:influ_app/main.dart';
+import 'package:influ_app/provider/AuthProvider.dart';
 import 'package:influ_app/screens/BottomBar/completed/completed.dart';
 import 'package:influ_app/screens/BottomBar/mainpage/mainPage.dart';
 import 'package:influ_app/screens/BottomBar/newEnquiry.dart';
 import 'package:influ_app/screens/BottomBar/upComing.dart';
+import 'package:influ_app/screens/BottomBar/walletPage.dart';
 import 'package:influ_app/utils/app_constants.dart';
 import 'package:influ_app/utils/app_preferences.dart';
 
@@ -18,18 +21,65 @@ class MenuPage extends StatefulWidget {
   _MenuPageState createState() => _MenuPageState();
 }
 
-class _MenuPageState extends State<MenuPage> {
+class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
   int selectedIndex = 0;
+  var walletAmount = 0;
+  late AnimationController _rotationController;
+  bool isRotating = false;
   static List<Widget> _widgetOptions = <Widget>[
     MainPage(),
     NewEnquiryPage(),
-    // UpcomingPage(),
     CompletedPage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    initFirebase();
+    refreshWallet();
+    _rotationController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    )..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          // When the rotation animation completes, reset the rotation
+          _rotationController.reset();
+          setState(() {
+            isRotating = false;
+          });
+        }
+      });
+  }
+
+  void _startRotation() {
+    if (!isRotating) {
+      _rotationController.forward();
+      setState(() {
+        isRotating = true;
+      });
+    }
+  }
+
   void _onItemTapped(int index) {
+    refreshWallet();
     setState(() {
       selectedIndex = index;
     });
+  }
+
+  void refreshWallet() async {
+    var data =
+        await PreferenceUtils.getString(AppPreferenceConstants.LOGIN_KEY);
+    if (data != '') {
+      var token =
+          await PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
+      await AuthProvider.fetchWallet(token: token);
+      var userData = json.decode(data);
+      setState(() {
+        print("wallet money is ${userData["walletMoney"]}");
+        walletAmount = userData["walletMoney"] ? userData["walletMoney"] : 0;
+      });
+    }
   }
 
   void initFirebase() async {
@@ -37,14 +87,11 @@ class _MenuPageState extends State<MenuPage> {
         await PreferenceUtils.getString(AppPreferenceConstants.LOGIN_KEY);
     if (data != '') {
       var userData = json.decode(data);
+      setState(() {
+        walletAmount = userData["walletMoney"] ? userData["walletMoney"] : 0;
+      });
       configurePushNotification(userData["_id"]);
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initFirebase();
   }
 
   @override
@@ -54,50 +101,114 @@ class _MenuPageState extends State<MenuPage> {
       drawer: NavDrawer(),
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 65, 161, 236),
-        title: Row(
-          children: [
-            Image.network(
-              'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/logo.jpg', // Replace with your logo image path
-              height: 35, // Adjust the height as needed
-              width: 35, // Adjust the width as needed
-            ),
-            SizedBox(width: 8), // Add spacing between the logo and text
-            Text(
-              'Beinfluencer',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+        title: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Image.network(
+                    'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/logo.jpg',
+                    height: 35,
+                    width: 35,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    'Beinfluencer',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+              Row(
+                children: [
+                  SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => WalletPage()),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(
+                            255, 236, 119, 9), // Customize the background color
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.account_balance_wallet, // Wallet symbol
+                            color: Color.fromARGB(255, 237, 234,
+                                234), // Customize the color as needed
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            '${walletAmount}', // Replace with the actual currency amount
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  AnimatedBuilder(
+                    animation: _rotationController,
+                    builder: (context, child) {
+                      return Transform.rotate(
+                        angle: _rotationController.value * 2 * pi,
+                        child: GestureDetector(
+                          onTap: () {
+                            refreshWallet();
+                            _startRotation();
+                          },
+                          child: Icon(
+                            Icons.refresh, // Refresh symbol
+                            color:
+                                Colors.white, // Customize the color as needed
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       body: Center(
         child: _widgetOptions.elementAt(selectedIndex),
       ),
       bottomNavigationBar: Container(
-          child: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        //backgroundColor: Colors.yellow,
-        selectedItemColor: Color.fromARGB(255, 65, 161, 236),
-        unselectedItemColor: Color.fromARGB(255, 12, 12, 12),
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.question_answer_sharp),
-            label: 'Live Adds',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.done_all),
-            label: 'Completed',
-          ),
-        ],
-        currentIndex: selectedIndex,
-        onTap: _onItemTapped,
-      )),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Color.fromARGB(255, 65, 161, 236),
+          unselectedItemColor: Color.fromARGB(255, 12, 12, 12),
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.question_answer_sharp),
+              label: 'Live Ads',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.done_all),
+              label: 'Completed',
+            ),
+          ],
+          currentIndex: selectedIndex,
+          onTap: _onItemTapped,
+        ),
+      ),
     );
   }
 }
