@@ -46,7 +46,7 @@ class _SettingPageState extends State<SettingPage> {
                 child: ElevatedButton(
                   onPressed: () async {
                     print("privacy policy");
-                    await launchUrl(Uri.parse(privacyPolicyUrl));
+                    await launchUrl(Uri.parse(termsAndConditionsUrl));
                   },
                   child: Text("Terms & Conditions"),
                 ),

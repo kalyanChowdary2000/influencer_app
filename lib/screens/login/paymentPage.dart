@@ -1,10 +1,11 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:influ_app/provider/AuthProvider.dart';
+import 'package:influ_app/screens/login/loginCategories.dart';
 import 'package:influ_app/screens/menuPage.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -13,6 +14,24 @@ import '../../utils/app_constants.dart';
 import '../../utils/app_preferences.dart';
 
 class PaymentPage extends StatefulWidget {
+  var dob;
+  var gender;
+  var email;
+  var password;
+  var name;
+  var phone;
+  var instagram;
+  var youtube;
+
+  PaymentPage(
+      {this.name,
+      this.phone,
+      this.email,
+      this.dob,
+      this.gender,
+      this.instagram,
+      this.youtube,
+      this.password});
   @override
   State<PaymentPage> createState() => _PaymentPageState();
 }
@@ -28,12 +47,22 @@ class _PaymentPageState extends State<PaymentPage> {
   String url = "";
   void verifyPayment() async {
     print("Verify Payment ");
-    var token =
-        await PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
+    // var token =
+    //     await PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
     //await AuthProvider.addTransaction(token: token, amount: amount);
+    var response = await AuthProvider.signIn(
+      dob: widget.dob,
+      gender: widget.gender,
+      email: widget.email,
+      password: widget.password,
+      name: widget.name,
+      phone: widget.phone,
+      instagram: widget.instagram,
+      youtube: widget.youtube,
+    );
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => MenuPage()),
+      MaterialPageRoute(builder: (context) => LoginCategoriesPage()),
     );
   }
 
@@ -41,7 +70,8 @@ class _PaymentPageState extends State<PaymentPage> {
     var token =
         await PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
 
-    var resp = await AuthProvider.encrypt(amount: amount, token: token);
+    var resp = await AuthProvider.encrypt(
+        email: widget.email, name: widget.name, phone: widget.phone);
     if (resp.success == "true") {
       setState(() {
         print("-------------- url is ${resp.data?["data"]["url"]}");
@@ -132,10 +162,13 @@ class _PaymentPageState extends State<PaymentPage> {
 
                       String orderStatusValue =
                           responseString.substring(startIndex, endIndex);
+                      print(
+                          "----------------------orderstatus value is ${orderStatusValue}");
                       print("Order Status: $orderStatusValue");
                       if (orderStatusValue == 'Success') {
                         setState(() {
                           shouldStopWebView = true;
+                          isLoading = true;
                         });
                         //_createOrder();
 

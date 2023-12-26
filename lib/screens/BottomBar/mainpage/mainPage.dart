@@ -73,9 +73,9 @@ class _MainPageState extends State<MainPage> {
     print('login data is ${data}');
 
     var youtubeData = await AuthProvider.fetchYoutube();
-    print(youtubeData);
+    print("---------- youtube data ------------- ${youtubeData}");
 
-    if (youtubeData["data"] && youtubeData["data"].length != 0) {
+    if (youtubeData["data"] != null && youtubeData["data"].length != 0) {
       setState(() {
         int? fc = int.tryParse(youtubeData["data"]["followerCount"]);
         youtubeId = youtubeData["data"]["customUrl"];

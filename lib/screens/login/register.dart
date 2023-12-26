@@ -1,10 +1,11 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last, library_private_types_in_public_api, use_key_in_widget_constructors, use_build_context_synchronously, deprecated_member_use, unused_field, unused_local_variable, no_leading_underscores_for_local_identifiers, unnecessary_brace_in_string_interps
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, library_private_types_in_public_api, use_key_in_widget_constructors, use_build_context_synchronously, deprecated_member_use, unused_field, unused_local_variable, no_leading_underscores_for_local_identifiers, unnecessary_brace_in_string_interps, unused_import, avoid_print, annotate_overrides
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:influ_app/provider/AuthProvider.dart';
 import 'package:influ_app/screens/BottomBar/mainpage/catergories.dart';
 import 'package:influ_app/screens/login/loginCategories.dart';
+import 'package:influ_app/screens/login/paymentPage.dart';
 import 'package:influ_app/screens/menuPage.dart';
 import 'package:influ_app/utils/app_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -32,13 +33,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
       TextEditingController(); // New controller for DOB
   Gender _selectedGender = Gender.male;
   DateTime _selectedDate = DateTime.now(); // Selected DOB
+  bool paymentFlag = true;
   String termsAndConditionsUrl =
       'https://doc-hosting.flycricket.io/beinfluencer-terms-and-conditions/49735d97-d461-4185-9464-a386da4a7bc9/privacy';
   String privacyPolicyUrl =
       'https://doc-hosting.flycricket.io/beinfluencer-privacy-policy/8a598136-2ebc-408b-9083-6646e4a1bbc3/privacy';
 
   int _verificationCode = 0;
-  bool _instagramFlag = false;
+  bool _instagramFlag = true;
   bool _youtubeFlag = false;
   bool _isRegisterButtonEnabled = false;
   bool _isPasswordVisible = false;
@@ -97,25 +99,49 @@ class _RegistrationPageState extends State<RegistrationPage> {
         gender = 'other';
       }
     }
-    var response = await AuthProvider.signIn(
-        dob: _dobController.text,
-        gender: gender,
-        email: _emailController.text,
-        password: _passwordController.text,
-        name: _nameController.text,
-        phone: _phoneController.text,
-        instagram: _instagramController.text,
-        youtube: _youtubeTittle);
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => LoginCategoriesPage()),
-    );
+    var resp = await AuthProvider.paymentFlag();
+    print("---------------- response ${resp.data?["success"]}");
+    setState(() {
+      paymentFlag = resp.data?["success"];
+    });
+    if (paymentFlag) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => PaymentPage(
+                  dob: _dobController.text,
+                  gender: gender,
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                  name: _nameController.text,
+                  phone: _phoneController.text,
+                  instagram: _instagramController.text,
+                  youtube: _youtubeTittle,
+                )),
+      );
+    } else {
+      var response = await AuthProvider.signIn(
+          dob: _dobController.text,
+          gender: gender,
+          email: _emailController.text,
+          password: _passwordController.text,
+          name: _nameController.text,
+          phone: _phoneController.text,
+          instagram: _instagramController.text,
+          youtube: _youtubeTittle);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LoginCategoriesPage()),
+      );
+    }
   }
 
   void youtubeDialog() async {
     print("youtube dialog");
     _verificationCode = _generateRandomCode();
     bool _isVerified = false;
+    bool _isLoading = false; // Add this variable to track loading state
+
     showDialog(
       context: context,
       builder: (context) {
@@ -127,7 +153,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Temporarily add this verification code to your youtube description',
+                    'Temporarily add this verification code to your YouTube description',
                     style: TextStyle(fontSize: 18),
                   ),
                   SizedBox(height: 8),
@@ -155,49 +181,62 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ],
                     ),
                   ),
+                  SizedBox(height: 16),
+                  _isLoading
+                      ? CircularProgressIndicator() // Show loading circle
+                      : ElevatedButton(
+                          onPressed: _isVerified
+                              ? () {
+                                  Navigator.of(context)
+                                      .pop(); // Close the dialog
+                                }
+                              : () async {
+                                  setState(() {
+                                    _isLoading = true; // Set loading state
+                                  });
+                                  var authResponse =
+                                      await AuthProvider.verifyYoutbe(
+                                    channelLink: _youtubeController.text,
+                                    verificationCode: '$_verificationCode',
+                                  );
+                                  setState(() {
+                                    _isVerified = authResponse['success'];
+                                    _isLoading = false; // Reset loading state
+                                  });
+                                  if (_isVerified) {
+                                    setState(() {
+                                      _youtubeFlag = true;
+                                    });
+                                    _updateRegisterButtonState();
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content:
+                                          Text('Account verified successfully'),
+                                    ));
+                                  } else {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text(
+                                          'Verification failed. Please try again.'),
+                                    ));
+                                  }
+                                },
+                          child:
+                              Text(_isVerified ? 'Verified' : 'Verify Account'),
+                          style: ElevatedButton.styleFrom(
+                            primary: _isVerified
+                                ? Colors.green
+                                : Color.fromARGB(255, 65, 161, 236),
+                          ),
+                        ),
                 ],
               ),
               actions: <Widget>[
                 ElevatedButton(
                   onPressed: () => {Navigator.pop(context)},
-                  child: Text('close'),
+                  child: Text('Close'),
                   style: ElevatedButton.styleFrom(
-                      primary: Color.fromARGB(255, 65, 161, 236)),
-                ),
-                ElevatedButton(
-                  onPressed: _isVerified
-                      ? () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        }
-                      : () async {
-                          var authResponse = await AuthProvider.verifyYoutbe(
-                              channelLink: _youtubeController.text,
-                              verificationCode: _verificationCode);
-                          setState(() {
-                            _isVerified = authResponse['success'];
-                            _youtubeTittle = authResponse['channelId'];
-                            print(_youtubeTittle);
-                          });
-                          if (_isVerified) {
-                            _youtubeFlag = true;
-                            _updateRegisterButtonState();
-                            // Set the button to green with "Verified" text
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('Account verified successfully'),
-                            ));
-                          } else {
-                            // Show an error message
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(
-                                  'Verification failed. Please try again.'),
-                            ));
-                          }
-                        },
-                  child: Text(_isVerified ? 'Verified' : 'Verify Account'),
-                  style: ElevatedButton.styleFrom(
-                    primary: _isVerified
-                        ? Colors.green
-                        : Color.fromARGB(255, 65, 161, 236),
+                    primary: Color.fromARGB(255, 65, 161, 236),
                   ),
                 ),
               ],
@@ -212,6 +251,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     print("instagram dialog");
     _verificationCode = _generateRandomCode();
     bool _isVerified = false;
+    bool _isLoading = false; // Add this variable to track loading state
 
     showDialog(
       context: context,
@@ -252,50 +292,62 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ],
                     ),
                   ),
+                  SizedBox(height: 16),
+                  _isLoading
+                      ? CircularProgressIndicator() // Show loading circle
+                      : ElevatedButton(
+                          onPressed: _isVerified
+                              ? () {
+                                  Navigator.of(context)
+                                      .pop(); // Close the dialog
+                                }
+                              : () async {
+                                  setState(() {
+                                    _isLoading = true; // Set loading state
+                                  });
+                                  var authResponse =
+                                      await AuthProvider.verifyInstagram(
+                                    username: _instagramController.text,
+                                    verificationCode: '$_verificationCode',
+                                  );
+                                  setState(() {
+                                    _isVerified = authResponse['success'];
+                                    _isLoading = false; // Reset loading state
+                                  });
+                                  if (_isVerified) {
+                                    setState(() {
+                                      _instagramFlag = true;
+                                    });
+                                    _updateRegisterButtonState();
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content:
+                                          Text('Account verified successfully'),
+                                    ));
+                                  } else {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text(
+                                          'Verification failed. Please try again.'),
+                                    ));
+                                  }
+                                },
+                          child:
+                              Text(_isVerified ? 'Verified' : 'Verify Account'),
+                          style: ElevatedButton.styleFrom(
+                            primary: _isVerified
+                                ? Colors.green
+                                : Color.fromARGB(255, 65, 161, 236),
+                          ),
+                        ),
                 ],
               ),
               actions: <Widget>[
                 ElevatedButton(
                   onPressed: () => {Navigator.pop(context)},
-                  child: Text('close'),
+                  child: Text('Close'),
                   style: ElevatedButton.styleFrom(
-                      primary: Color.fromARGB(255, 65, 161, 236)),
-                ),
-                ElevatedButton(
-                  onPressed: _isVerified
-                      ? () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        }
-                      : () async {
-                          var authResponse = await AuthProvider.verifyInstagram(
-                              username: _instagramController.text,
-                              verificationCode: '${_verificationCode}');
-                          setState(() {
-                            _isVerified = authResponse['success'];
-                          });
-                          if (_isVerified) {
-                            setState(() {
-                              _instagramFlag = true;
-                            });
-
-                            _updateRegisterButtonState();
-                            // Set the button to green with "Verified" text
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('Account verified successfully'),
-                            ));
-                          } else {
-                            // Show an error message
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(
-                                  'Verification failed. Please try again.'),
-                            ));
-                          }
-                        },
-                  child: Text(_isVerified ? 'Verified' : 'Verify Account'),
-                  style: ElevatedButton.styleFrom(
-                    primary: _isVerified
-                        ? Colors.green
-                        : Color.fromARGB(255, 65, 161, 236),
+                    primary: Color.fromARGB(255, 65, 161, 236),
                   ),
                 ),
               ],
@@ -521,7 +573,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                 ? instagramDialog()
                                 : null;
                           },
-                          child: Text('verified✅'),
+                          child: Text('Verified✅'),
                           style: ElevatedButton.styleFrom(
                               primary: Color.fromARGB(255, 12, 125, 12)),
                         )
@@ -569,7 +621,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                 ? instagramDialog()
                                 : null;
                           },
-                          child: Text('verified✅'),
+                          child: Text('Verified✅'),
                           style: ElevatedButton.styleFrom(
                               primary: Color.fromARGB(255, 12, 125, 12)),
                         )

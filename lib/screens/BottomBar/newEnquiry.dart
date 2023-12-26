@@ -103,14 +103,12 @@ class _NewEnquiryPageState extends State<NewEnquiryPage> {
           children: [
             ListTile(
               title: Center(
-                child: Flexible(
-                  child: Text(
-                    myAddsList['tittle'],
-                    style: const TextStyle(
-                      fontSize: 18.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700,
-                    ),
+                child: Text(
+                  myAddsList['tittle'],
+                  style: const TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),

@@ -76,8 +76,10 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
       await AuthProvider.fetchWallet(token: token);
       var userData = json.decode(data);
       setState(() {
-        print("wallet money is ${userData["walletMoney"]}");
-        walletAmount = userData["walletMoney"] ? userData["walletMoney"] : 0;
+        print(
+            "================================================================wallet money is ${userData["walletMoney"]}");
+        walletAmount =
+            userData["walletMoney"] != null ? userData["walletMoney"] : 0;
       });
     }
   }

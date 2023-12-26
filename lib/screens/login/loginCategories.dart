@@ -49,7 +49,18 @@ class _LoginCategoriesPageState extends State<LoginCategoriesPage> {
       if (selectedItems.contains(item)) {
         selectedItems.remove(item);
       } else {
-        selectedItems.add(item);
+        // Check if the user has already selected 5 items
+        if (selectedItems.length < 5) {
+          selectedItems.add(item);
+        } else {
+          // You can show a message to the user indicating that they can only select 5 items
+          // For example, you can use a SnackBar:
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('You can only select up to 5 items.'),
+            ),
+          );
+        }
       }
     });
   }

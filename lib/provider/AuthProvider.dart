@@ -24,6 +24,35 @@ class AuthProvider {
     debugPrint("Initialized auth provider");
   }
 
+  static Future<bool> changePassword({
+    required String password,
+    required String newPassword,
+  }) async {
+    try {
+      String token =
+          PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
+      var params = {
+        "token": token,
+        "password": password,
+        "newPassword": newPassword
+      };
+      Response response = await dio.post(
+        AppNetworkConstants.apiChangePassword,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: jsonEncode(params),
+      );
+      final Map<String, dynamic> data = await decrypt(response.data);
+      print("-----------------chnage password status ${data}");
+      //final data = jsonDecode(response.data);
+      return data["success"];
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    }
+  }
+
   static Map<String, dynamic> decrypt(inputString) {
     final key = encryptText.Key.fromBase64(
         "/tck8EIqBYxdrf1yPgMt9aA9/28ZI/g83KnLpWt1ojo="); // Replace with your actual 32-byte key
@@ -94,6 +123,27 @@ class AuthProvider {
       return {
         "success": false,
       };
+    }
+  }
+
+  static Future<bool> forgotPassword({
+    required String phone,
+  }) async {
+    try {
+      var params = {
+        "_id": phone,
+      };
+      Response response = await dio.post(
+        AppNetworkConstants.apiForgotPassword,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: jsonEncode(params),
+      );
+      return true;
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
     }
   }
 
@@ -195,7 +245,7 @@ class AuthProvider {
   }
 
   static Future<Map<String, dynamic>> verifyYoutbe(
-      {required String channelLink, required int verificationCode}) async {
+      {required String channelLink, required verificationCode}) async {
     try {
       var params = {
         "channelLink": channelLink,
@@ -387,10 +437,42 @@ class AuthProvider {
     }
   }
 
-  static Future<CustomResponse> encrypt(
-      {required String token, required double amount}) async {
+  static Future<CustomResponse> paymentFlag() async {
     try {
-      var params = {"amount": amount, "isTesting": true, "token": token};
+      var params = {};
+      Response response = await dio.post(
+        AppNetworkConstants.apiPaymentFlag,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: jsonEncode(params),
+      );
+
+      if (response.statusCode == 401) {
+        return CustomResponse(success: "retry");
+      }
+      final Map<String, dynamic> data = await decrypt(response.data);
+      //  print(response.data);
+      print("hiii");
+      return CustomResponse(success: "true", data: data);
+    } catch (e) {
+      print("error ${e}");
+      debugPrint(e.toString());
+      return CustomResponse(success: "false");
+    }
+  }
+
+  static Future<CustomResponse> encrypt(
+      {required String name,
+      required String phone,
+      required String email}) async {
+    try {
+      var params = {
+        "isTesting": true,
+        "name": name,
+        "_id": phone,
+        "email": email
+      };
       Response response = await dio.post(
         AppNetworkConstants.apiEncrypt,
         options: Options(headers: {

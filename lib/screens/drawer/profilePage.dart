@@ -1,17 +1,15 @@
-// ignore_for_file: prefer_final_fields, prefer_const_constructors, unused_local_variable, depend_on_referenced_packages, unused_import, use_build_context_synchronously
-
+// ignore_for_file: prefer_final_fields, prefer_const_constructors, unused_local_variable, depend_on_referenced_packages, unused_import, use_build_context_synchronously, avoid_print, sort_child_properties_last
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:influ_app/provider/AuthProvider.dart';
 import 'dart:io';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:influ_app/screens/drawer/changePassword.dart';
 import 'package:influ_app/screens/login/register.dart';
 import 'package:influ_app/utils/app_preferences.dart';
-
 import '../../utils/app_constants.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -560,8 +558,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    onPressed: () =>
-                        {}, //_isEditing ? null : _navigateToChangePassword,
+                    onPressed: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ChangePasswordPage()),
+                      )
+                    }, //_isEditing ? null : _navigateToChangePassword,
                     child: Text('Change Password'),
                   ),
                   ElevatedButton(

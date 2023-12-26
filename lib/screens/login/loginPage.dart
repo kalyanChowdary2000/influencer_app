@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:influ_app/screens/BottomBar/mainpage/mainPage.dart';
+import 'package:influ_app/screens/login/forgotPasswordPage.dart';
 import 'package:influ_app/screens/login/loginCategories.dart';
 import 'package:influ_app/screens/menuPage.dart';
 import '../../main.dart';
@@ -144,6 +145,30 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 1.0),
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context_) {
+                                return ForgotPasswordPage(); //ForgotPasswordPage();
+                              },
+                            ),
+                          );
+                          // Navigate to the Forgot Password page
+                          // Implement your Forgot Password logic here
+                        },
+                        child: Text(
+                          "Forgot Password?",
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 16.0),
                       child: Center(
                         child: ElevatedButton(
@@ -219,5 +244,3 @@ class _LoginPageState extends State<LoginPage> {
     // });
   }
 }
-
-class ForgotPasswordPage {}
