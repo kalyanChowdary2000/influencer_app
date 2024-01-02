@@ -140,6 +140,7 @@ class AuthProvider {
         }),
         data: jsonEncode(params),
       );
+      final Map<String, dynamic> data = await decrypt(response.data);
       return true;
     } catch (e) {
       debugPrint(e.toString());

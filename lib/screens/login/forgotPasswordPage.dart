@@ -82,7 +82,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   void _onForgotPassword(String phoneNumber) async {
     // Implement your "Forgot Password" logic here
     // For now, we'll just show a snackbar to simulate the process.
-    AuthProvider.forgotPassword(phone: phoneController.text);
+    await AuthProvider.forgotPassword(phone: phoneController.text);
     const snackBar = SnackBar(
       content: Text('Temporary password sent to your phone number.'),
     );

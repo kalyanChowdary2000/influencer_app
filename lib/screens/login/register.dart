@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last, library_private_types_in_public_api, use_key_in_widget_constructors, use_build_context_synchronously, deprecated_member_use, unused_field, unused_local_variable, no_leading_underscores_for_local_identifiers, unnecessary_brace_in_string_interps, unused_import, avoid_print, annotate_overrides
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, library_private_types_in_public_api, use_key_in_widget_constructors, use_build_context_synchronously, deprecated_member_use, unused_field, unused_local_variable, no_leading_underscores_for_local_identifiers, unnecessary_brace_in_string_interps, unused_import, avoid_print, annotate_overrides, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,7 +40,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       'https://doc-hosting.flycricket.io/beinfluencer-privacy-policy/8a598136-2ebc-408b-9083-6646e4a1bbc3/privacy';
 
   int _verificationCode = 0;
-  bool _instagramFlag = true;
+  bool _instagramFlag = false;
   bool _youtubeFlag = false;
   bool _isRegisterButtonEnabled = false;
   bool _isPasswordVisible = false;
@@ -153,7 +153,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Temporarily add this verification code to your YouTube description',
+                    'Temporarily paste the displayed verification code in your Youtube profile description, and then click on the Verify button on the app.',
                     style: TextStyle(fontSize: 18),
                   ),
                   SizedBox(height: 8),
@@ -264,7 +264,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Temporarily add this verification code to your bio',
+                    'Temporarily paste the displayed verification code in your instagram bio, and then click on the ‘Verify Account’ button on the app.',
                     style: TextStyle(fontSize: 18),
                   ),
                   SizedBox(height: 8),
@@ -589,6 +589,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         ),
                 ],
               ),
+              Row(
+                children: [
+                  Text(
+                    "* Enter your Instagram Id here",
+                    style: TextStyle(color: Color.fromARGB(255, 14, 54, 217)),
+                  ),
+                ],
+              ),
               SizedBox(height: 20.0),
               Row(
                 children: [
@@ -617,8 +625,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   _youtubeFlag
                       ? ElevatedButton(
                           onPressed: () {
-                            _instagramController.text.isNotEmpty
-                                ? instagramDialog()
+                            _youtubeController.text.isNotEmpty
+                                ? youtubeDialog()
                                 : null;
                           },
                           child: Text('Verified✅'),
@@ -635,6 +643,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           style: ElevatedButton.styleFrom(
                               primary: Color.fromARGB(255, 65, 161, 236)),
                         ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text(
+                    "* Enter your Youtube Profile Link here",
+                    style: TextStyle(color: Color.fromARGB(255, 14, 54, 217)),
+                  ),
                 ],
               ),
               SizedBox(height: 20.0),
