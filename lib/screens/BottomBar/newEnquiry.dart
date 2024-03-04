@@ -15,10 +15,23 @@ class NewEnquiryPage extends StatefulWidget {
 
 class _NewEnquiryPageState extends State<NewEnquiryPage> {
   var myAddsList = [];
+  var globalAddsList = [];
   double downloadProgress = 0.0;
   bool globalFlag = false;
   void fetchAddData() async {
     var data = await AuthProvider.fetchInfluAdd(); // Replace with your API call
+    print(data);
+
+    if (data["data"].length != 0) {
+      setState(() {
+        globalAddsList = data['data'];
+      });
+    }
+  }
+
+  void fetchGlobalAddData() async {
+    var data =
+        await AuthProvider.fetchGlobalAdd(); // Replace with your API call
     print(data);
 
     if (data["data"].length != 0) {
@@ -32,57 +45,80 @@ class _NewEnquiryPageState extends State<NewEnquiryPage> {
   void initState() {
     super.initState();
     fetchAddData();
+    fetchGlobalAddData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            TextButton(
-              onPressed: () async {
-                setState(() {
-                  globalFlag = !globalFlag;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-                //    side: BorderSide(),
-                backgroundColor: !globalFlag
-                    ? Color.fromARGB(255, 99, 62, 151)
-                    : Colors.grey,
+    return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.white,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.blue, // Choose the border color
+                  width: 2.0, // Choose the border width
+                ),
               ),
-              child: Text('My Ads', style: TextStyle(fontSize: 15)),
             ),
-            // Text("        "),
-            TextButton(
-              onPressed: () async {
-                setState(() {
-                  globalFlag = !globalFlag;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                primary:
-                    globalFlag ? Color.fromARGB(255, 99, 62, 151) : Colors.grey,
-              ),
-              child: Text('All Ads', style: TextStyle(fontSize: 15)),
-            ),
-          ],
-        ),
-        globalFlag ? _buildGlobalAdsList() : _buildAddsList(),
-      ],
-    ));
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        setState(() {
+                          globalFlag = false;
+                        });
+                      },
+                      child: Text(
+                        "My Categories",
+                        style: TextStyle(
+                            color: globalFlag ? Colors.black : Colors.blue,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      )),
+                  VerticalDivider(
+                    color: Colors.blue,
+                    // width: 40,
+                    thickness: 2, // Adjust the width as needed
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        setState(() {
+                          globalFlag = true;
+                        });
+                      },
+                      child: Text(
+                        "All Categories",
+                        style: TextStyle(
+                            color: !globalFlag ? Colors.black : Colors.blue,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ))
+                ]),
+          )),
+      body: globalFlag ? _buildGlobalAdsList() : _buildAddsList(),
+    );
   }
 
   Widget _buildGlobalAdsList() {
-    return const Center(
-      child: Text(
-        "Global Ads list is empty!",
-      ),
+    if (globalAddsList.isEmpty) {
+      return const Center(
+        child: Text(
+          "Ads list is empty!",
+        ),
+      );
+    }
+    return ListView.separated(
+      padding: const EdgeInsets.all(16.0),
+      itemBuilder: (_, index) {
+        return _buildNewOrderItem(globalAddsList[index]);
+      },
+      separatorBuilder: (_, __) {
+        return const Divider();
+      },
+      itemCount: globalAddsList.length,
     );
   }
 
@@ -296,6 +332,128 @@ class _NewEnquiryPageState extends State<NewEnquiryPage> {
                           : Text("Verify my post"),
                     ), // Button based on verification status
             )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlobalOrderItem(myAddsList) {
+    final socialMediaLinks = myAddsList["socialMediaLinks"] ?? [];
+    bool isInstagramVerified =
+        false; // You can set these values based on your verification logic
+    bool isYouTubeVerified = false;
+    List<Widget> imageWidgets = [];
+    List<Widget> videoWidgets = [];
+    List<Widget> linkWidgets = [];
+    for (var link in socialMediaLinks) {
+      bool isImage = link["imageFlag"];
+      print("------------------------------------------");
+      print(link["link"]);
+      linkWidgets.add(_buildLinkWidget(link["link"]));
+      if (isImage) {
+        imageWidgets.add(_buildImageWidget(link["link"]));
+      } else {
+        videoWidgets.add(_buildVideoWidget(link["link"]));
+      }
+    }
+
+    return InkWell(
+      onTap: () {
+        // _navigateToProductDetailPage(product);
+      },
+      child: Card(
+        color: Color.fromARGB(255, 249, 249, 249),
+        elevation: 4,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            ListTile(
+              title: Center(
+                child: Text(
+                  myAddsList['tittle'],
+                  style: const TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    myAddsList['description'],
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Downloadable Media Links",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: linkWidgets,
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text("Platforms :"),
+                myAddsList['instaFlag']
+                    ? Container(
+                        height: 60,
+                        width: 60,
+                        child: Padding(
+                          padding: EdgeInsets.all(2.0),
+                          child: Image.network(
+                              'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/instagram.png'),
+                        ),
+                      )
+                    : Text(""),
+                myAddsList['ytFlag']
+                    ? Container(
+                        height: 60,
+                        width: 60,
+                        child: Padding(
+                          padding: EdgeInsets.all(2.0),
+                          child: Image.network(
+                              'https://azhanaresources.s3.ap-south-1.amazonaws.com/images/youtube_logo.png'),
+                        ),
+                      )
+                    : Text(""),
+              ],
+            ),
+            Container(
+              color: Colors.white,
+              margin: const EdgeInsets.symmetric(vertical: 20),
+              height: 200,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 20,
+                    ),
+                    ...imageWidgets,
+                    ...videoWidgets,
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

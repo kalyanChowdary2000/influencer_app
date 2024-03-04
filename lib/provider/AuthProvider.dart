@@ -448,6 +448,28 @@ class AuthProvider {
     }
   }
 
+  static Future<Map<String, dynamic>> fetchGlobalAdd() async {
+    try {
+      var token = PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
+      var params = {"token": token};
+      Response response = await dio.post(
+        AppNetworkConstants.apiFetchGlobalAdd,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: jsonEncode(params),
+      );
+      final Map<String, dynamic> data = await decrypt(response.data);
+      return data;
+    } catch (e) {
+      print("error");
+      debugPrint(e.toString());
+      return {
+        "success": false,
+      };
+    }
+  }
+
   static Future<Map<String, dynamic>> fetchComInfluAdd() async {
     try {
       var token = PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);

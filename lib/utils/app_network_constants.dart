@@ -1,9 +1,9 @@
 class AppNetworkConstants {
   static String natsServerEndPoint = "ws://3.7.62.224:440";
   static String natsServerToken = "keus-ops-nats";
-  static String apiEndPoint = "http://192.168.1.9:6060";
+  //static String apiEndPoint = "http://192.168.1.9:6060";
   //static String apiEndPoint = "http://100.84.18.148:6060";
-  //static String apiEndPoint = "http://15.206.1.214:6060";
+  static String apiEndPoint = "http://15.206.1.214:6060";
   static String apiFetchWallet = "$apiEndPoint/fetchWallet";
   static String apiChangePassword = "$apiEndPoint/changePassword";
   static String apiFetchTransaction = "$apiEndPoint/fetchTransaction";
@@ -25,6 +25,7 @@ class AppNetworkConstants {
   static String apiEncrypt = "$apiEndPoint/encrypt";
   static String apiPaymentFlag = "$apiEndPoint/paymentFlag";
   static String apiFetchInfluAdd = "$apiEndPoint/fetchInfluAdd";
+  static String apiFetchGlobalAdd = "$apiEndPoint/fetchGlobalAdd";
   static String apiFetchComInfluAdd = "$apiEndPoint/fetchComAdd";
   static String apiVerifyAdd = "$apiEndPoint/verifyAdd";
   static String apiDeleteUser = "$apiEndPoint/deleteUser";
