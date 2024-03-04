@@ -1,5 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last, library_private_types_in_public_api, use_key_in_widget_constructors, use_build_context_synchronously, deprecated_member_use, unused_field, unused_local_variable, no_leading_underscores_for_local_identifiers, unnecessary_brace_in_string_interps, unused_import, avoid_print, annotate_overrides, prefer_const_literals_to_create_immutables
-
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, library_private_types_in_public_api, use_key_in_widget_constructors, use_build_context_synchronously, deprecated_member_use, unused_field, unused_local_variable, no_leading_underscores_for_local_identifiers, unnecessary_brace_in_string_interps, unused_import, avoid_print, annotate_overrides, prefer_const_literals_to_create_immutables, prefer_final_fields
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:influ_app/provider/AuthProvider.dart';
@@ -38,17 +37,21 @@ class _RegistrationPageState extends State<RegistrationPage> {
       'https://doc-hosting.flycricket.io/beinfluencer-terms-and-conditions/49735d97-d461-4185-9464-a386da4a7bc9/privacy';
   String privacyPolicyUrl =
       'https://doc-hosting.flycricket.io/beinfluencer-privacy-policy/8a598136-2ebc-408b-9083-6646e4a1bbc3/privacy';
+  String instaInstructions =
+      "https://doc-hosting.flycricket.io/how-to-link-your-instagram-with-beinfluencer/365e9d6d-0b97-4f49-b72a-5c426d5baedb/other";
+  String ytInstructions =
+      "https://doc-hosting.flycricket.io/how-to-link-your-youtube-account-with-beinfluencer/3c10592a-2f66-4030-9e85-e89f8b74a80c/privacy";
 
   int _verificationCode = 0;
-  bool _instagramFlag = false;
-  bool _youtubeFlag = false;
+  bool _instagramFlag = true;
+  bool _youtubeFlag = true;
   bool _isRegisterButtonEnabled = false;
   bool _isPasswordVisible = false;
   String _youtubeTittle = '';
   bool _isChecked = false;
   int _generateRandomCode() {
     final random = Random();
-    return random.nextInt(900000) + 100000; // Generates a random 6-digit number
+    return random.nextInt(900000) + 100000;
   }
 
   void _updateRegisterButtonState() {
@@ -91,49 +94,27 @@ class _RegistrationPageState extends State<RegistrationPage> {
   void _register() async {
     String gender = '';
     if (_selectedGender == Gender.male) {
-      gender = "male";
+      gender = "Male";
     } else {
       if (_selectedGender == Gender.female) {
-        gender = "female";
+        gender = "Female";
       } else {
-        gender = 'other';
+        gender = 'Other';
       }
     }
-    var resp = await AuthProvider.paymentFlag();
-    print("---------------- response ${resp.data?["success"]}");
-    setState(() {
-      paymentFlag = resp.data?["success"];
-    });
-    if (paymentFlag) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => PaymentPage(
-                  dob: _dobController.text,
-                  gender: gender,
-                  email: _emailController.text,
-                  password: _passwordController.text,
-                  name: _nameController.text,
-                  phone: _phoneController.text,
-                  instagram: _instagramController.text,
-                  youtube: _youtubeTittle,
-                )),
-      );
-    } else {
-      var response = await AuthProvider.signIn(
-          dob: _dobController.text,
-          gender: gender,
-          email: _emailController.text,
-          password: _passwordController.text,
-          name: _nameController.text,
-          phone: _phoneController.text,
-          instagram: _instagramController.text,
-          youtube: _youtubeTittle);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => LoginCategoriesPage()),
-      );
-    }
+    var response = await AuthProvider.signIn(
+        dob: _dobController.text,
+        gender: gender,
+        email: _emailController.text,
+        password: _passwordController.text,
+        name: _nameController.text,
+        phone: _phoneController.text,
+        instagram: _instagramController.text,
+        youtube: _youtubeTittle);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LoginCategoriesPage()),
+    );
   }
 
   void youtubeDialog() async {
@@ -542,117 +523,130 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 },
               ),
               SizedBox(height: 20.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _instagramController,
-                      decoration: InputDecoration(
-                        labelText: 'Instagram ID',
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 65, 161, 236)),
-                        ),
-                        labelStyle: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                      cursorColor: Color.fromARGB(255, 65, 161, 236),
-                      maxLines: 1,
-                      onChanged: (_) => _updateRegisterButtonState(),
-                    ),
-                  ),
-                  SizedBox(
-                      width:
-                          10.0), // Add some spacing between the TextFormField and the button
-                  _instagramFlag
-                      ? ElevatedButton(
-                          onPressed: () {
-                            _instagramController.text.isNotEmpty
-                                ? instagramDialog()
-                                : null;
-                          },
-                          child: Text('Verified✅'),
-                          style: ElevatedButton.styleFrom(
-                              primary: Color.fromARGB(255, 12, 125, 12)),
-                        )
-                      : ElevatedButton(
-                          onPressed: () {
-                            _instagramController.text.isNotEmpty
-                                ? instagramDialog()
-                                : null;
-                          },
-                          child: Text('verify Id'),
-                          style: ElevatedButton.styleFrom(
-                              primary: Color.fromARGB(255, 65, 161, 236)),
-                        ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(
-                    "* Enter your Instagram Id here",
-                    style: TextStyle(color: Color.fromARGB(255, 14, 54, 217)),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _youtubeController,
-                      decoration: InputDecoration(
-                        labelText: 'Youtube Profile Link',
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 65, 161, 236)),
-                        ),
-                        labelStyle: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                      cursorColor: Color.fromARGB(255, 65, 161, 236),
-                      maxLines: 1,
-                      onChanged: (_) => _updateRegisterButtonState(),
-                    ),
-                  ),
-                  SizedBox(
-                      width:
-                          10.0), // Add some spacing between the TextFormField and the button
-                  _youtubeFlag
-                      ? ElevatedButton(
-                          onPressed: () {
-                            _youtubeController.text.isNotEmpty
-                                ? youtubeDialog()
-                                : null;
-                          },
-                          child: Text('Verified✅'),
-                          style: ElevatedButton.styleFrom(
-                              primary: Color.fromARGB(255, 12, 125, 12)),
-                        )
-                      : ElevatedButton(
-                          onPressed: () {
-                            _youtubeController.text.isNotEmpty
-                                ? youtubeDialog()
-                                : null;
-                          },
-                          child: Text('verify Id'),
-                          style: ElevatedButton.styleFrom(
-                              primary: Color.fromARGB(255, 65, 161, 236)),
-                        ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(
-                    "* Enter your Youtube Profile Link here",
-                    style: TextStyle(color: Color.fromARGB(255, 14, 54, 217)),
-                  ),
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: TextFormField(
+              //         controller: _instagramController,
+              //         decoration: InputDecoration(
+              //           labelText: 'Instagram ID',
+              //           border: OutlineInputBorder(),
+              //           focusedBorder: OutlineInputBorder(
+              //             borderSide: BorderSide(
+              //                 color: Color.fromARGB(255, 65, 161, 236)),
+              //           ),
+              //           labelStyle: TextStyle(
+              //             color: Colors.black,
+              //           ),
+              //         ),
+              //         cursorColor: Color.fromARGB(255, 65, 161, 236),
+              //         maxLines: 1,
+              //         onChanged: (_) => _updateRegisterButtonState(),
+              //       ),
+              //     ),
+              //     SizedBox(
+              //         width:
+              //             10.0), // Add some spacing between the TextFormField and the button
+              //     _instagramFlag
+              //         ? ElevatedButton(
+              //             onPressed: () {
+              //               _instagramController.text.isNotEmpty
+              //                   ? instagramDialog()
+              //                   : null;
+              //             },
+              //             child: Text('Verified✅'),
+              //             style: ElevatedButton.styleFrom(
+              //                 primary: Color.fromARGB(255, 12, 125, 12)),
+              //           )
+              //         : ElevatedButton(
+              //             onPressed: () {
+              //               _instagramController.text.isNotEmpty
+              //                   ? instagramDialog()
+              //                   : null;
+              //             },
+              //             child: Text('Verify ID'),
+              //             style: ElevatedButton.styleFrom(
+              //                 primary: Color.fromARGB(255, 65, 161, 236)),
+              //           ),
+              //   ],
+              // ),
+              // Row(children: [
+              //   Text(
+              //     "*How To Verify Your Instagram Account ",
+              //     style: TextStyle(fontSize: 12),
+              //   ),
+              //   GestureDetector(
+              //     onTap: () async =>
+              //         await launchUrl(Uri.parse(instaInstructions)),
+              //     child: Text(
+              //       "Click Here",
+              //       style: TextStyle(
+              //           color: Color.fromARGB(255, 65, 161, 236), fontSize: 14),
+              //     ),
+              //   )
+              // ]),
+              // SizedBox(height: 20.0),
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: TextFormField(
+              //         controller: _youtubeController,
+              //         decoration: InputDecoration(
+              //           labelText: 'Youtube Profile Link',
+              //           border: OutlineInputBorder(),
+              //           focusedBorder: OutlineInputBorder(
+              //             borderSide: BorderSide(
+              //                 color: Color.fromARGB(255, 65, 161, 236)),
+              //           ),
+              //           labelStyle: TextStyle(
+              //             color: Colors.black,
+              //           ),
+              //         ),
+              //         cursorColor: Color.fromARGB(255, 65, 161, 236),
+              //         maxLines: 1,
+              //         onChanged: (_) => _updateRegisterButtonState(),
+              //       ),
+              //     ),
+              //     SizedBox(
+              //         width:
+              //             10.0), // Add some spacing between the TextFormField and the button
+              //     _youtubeFlag
+              //         ? ElevatedButton(
+              //             onPressed: () {
+              //               _youtubeController.text.isNotEmpty
+              //                   ? youtubeDialog()
+              //                   : null;
+              //             },
+              //             child: Text('Verified✅'),
+              //             style: ElevatedButton.styleFrom(
+              //                 primary: Color.fromARGB(255, 12, 125, 12)),
+              //           )
+              //         : ElevatedButton(
+              //             onPressed: () {
+              //               _youtubeController.text.isNotEmpty
+              //                   ? youtubeDialog()
+              //                   : null;
+              //             },
+              //             child: Text('Verify ID'),
+              //             style: ElevatedButton.styleFrom(
+              //                 primary: Color.fromARGB(255, 65, 161, 236)),
+              //           ),
+              //   ],
+              // ),
+              // Row(children: [
+              //   Text(
+              //     "  *How To Link Your Youtube ",
+              //     style: TextStyle(fontSize: 12),
+              //   ),
+              //   GestureDetector(
+              //     onTap: () async => await launchUrl(Uri.parse(ytInstructions)),
+              //     child: Text(
+              //       "Click Here",
+              //       style: TextStyle(
+              //           color: Color.fromARGB(255, 65, 161, 236), fontSize: 14),
+              //     ),
+              //   )
+              // ]),
               SizedBox(height: 20.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,

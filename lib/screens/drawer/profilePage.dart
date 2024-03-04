@@ -399,7 +399,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Expanded(
                       flex: 2,
                       child: Text(
-                        "Youtube",
+                        "YouTube",
                         style: TextStyle(
                             color: Colors.black, fontWeight: FontWeight.bold),
                       ),
@@ -495,7 +495,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Expanded(
                       flex: 2,
                       child: Text(
-                        "Ifsc Code",
+                        "IFSC Code",
                         style: TextStyle(
                             color: Colors.black, fontWeight: FontWeight.bold),
                       ),
@@ -519,7 +519,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Expanded(
                       flex: 2,
                       child: Text(
-                        "Branch Name",
+                        "Branch",
                         style: TextStyle(
                             color: Colors.black, fontWeight: FontWeight.bold),
                       ),

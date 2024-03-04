@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:influ_app/provider/AuthProvider.dart';
-import 'package:influ_app/screens/menuPage.dart';
 import 'package:influ_app/utils/app_constants.dart';
 import 'package:influ_app/utils/app_preferences.dart';
 

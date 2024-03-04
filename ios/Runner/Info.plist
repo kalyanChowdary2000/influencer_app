@@ -17,6 +17,8 @@
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		<key>NSUserNotificationsUsageDescription</key>
+		<string>Notification are used to notify users about app updates</string>
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundleName</key>
@@ -56,5 +58,6 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+
 	</dict>
 </plist>

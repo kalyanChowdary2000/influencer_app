@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print
 
 import 'dart:convert';
 
@@ -14,24 +14,7 @@ import '../../utils/app_constants.dart';
 import '../../utils/app_preferences.dart';
 
 class PaymentPage extends StatefulWidget {
-  var dob;
-  var gender;
-  var email;
-  var password;
-  var name;
-  var phone;
-  var instagram;
-  var youtube;
-
-  PaymentPage(
-      {this.name,
-      this.phone,
-      this.email,
-      this.dob,
-      this.gender,
-      this.instagram,
-      this.youtube,
-      this.password});
+  PaymentPage();
   @override
   State<PaymentPage> createState() => _PaymentPageState();
 }
@@ -39,39 +22,59 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   bool isDeposit = true;
   bool isLoading = true;
-  double amount = 500;
+  double amount = 499;
   Map<String, dynamic>? paymentIntent;
   late InAppWebViewController _webViewController;
   late WebViewController controller;
   bool shouldStopWebView = false;
   String url = "";
+  Future<void> showVerificationDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Payment Verification'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Your payment has been successfully verified.'),
+                // Add any additional information you want to display
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void verifyPayment() async {
-    print("Verify Payment ");
-    // var token =
-    //     await PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
-    //await AuthProvider.addTransaction(token: token, amount: amount);
-    var response = await AuthProvider.signIn(
-      dob: widget.dob,
-      gender: widget.gender,
-      email: widget.email,
-      password: widget.password,
-      name: widget.name,
-      phone: widget.phone,
-      instagram: widget.instagram,
-      youtube: widget.youtube,
-    );
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => LoginCategoriesPage()),
-    );
+    try {
+      print("Verify Payment ");
+      await AuthProvider.activateFlag();
+      //showVerificationDialog();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MenuPage()),
+      );
+    } catch (e) {
+      print('error in verify paymnet ${e}');
+    }
   }
 
   void getUrl() async {
     var token =
         await PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
 
-    var resp = await AuthProvider.encrypt(
-        email: widget.email, name: widget.name, phone: widget.phone);
+    var resp = await AuthProvider.encrypt();
     if (resp.success == "true") {
       setState(() {
         print("-------------- url is ${resp.data?["data"]["url"]}");
@@ -91,7 +94,7 @@ class _PaymentPageState extends State<PaymentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('INFLU PAYMENT'),
+          title: Text('Complete Your Registration'),
         ),
         body: isLoading
             ? Center(

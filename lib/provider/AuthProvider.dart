@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, unused_import, unnecessary_brace_in_string_interps
+// ignore_for_file: prefer_typing_uninitialized_variables, unused_import, unnecessary_brace_in_string_interps, await_only_futures, avoid_print, library_prefixes
 
 import 'dart:convert';
 import 'dart:io';
@@ -345,6 +345,65 @@ class AuthProvider {
     }
   }
 
+  static Future<bool> activateFlag() async {
+    try {
+      String token =
+          PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
+      var params = {"token": token};
+      Response response = await dio.post(
+        AppNetworkConstants.apiActivateFlag,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: jsonEncode(params),
+      );
+      final Map<String, dynamic> data = await decrypt(response.data);
+      bool isLoginSuccess = data["success"];
+      print("-------------------------- updated data ${data}");
+      if (isLoginSuccess) {
+        await PreferenceUtils.setString(
+          AppPreferenceConstants.LOGIN_KEY,
+          json.encode(data["data"]),
+        );
+      }
+      // ToDo : connect to nats
+      return isLoginSuccess;
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    }
+  }
+
+  static Future<bool> fetchPaymentFlag() async {
+    try {
+      String token =
+          PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
+      var params = {"token": token};
+
+      Response response = await dio.post(
+        AppNetworkConstants.apipaymentFlagVerification,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+        }),
+        data: jsonEncode(params),
+      );
+      final Map<String, dynamic> data = await decrypt(response.data);
+      bool isLoginSuccess = data["success"];
+      print("-------------------------- updated data ${data}");
+      if (isLoginSuccess) {
+        await PreferenceUtils.setString(
+          AppPreferenceConstants.LOGIN_KEY,
+          json.encode(data["data"]),
+        );
+      }
+      // ToDo : connect to nats
+      return data["paymentFlag"];
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    }
+  }
+
   static Future<Map<String, dynamic>> fetchYoutube() async {
     try {
       var token = PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
@@ -463,17 +522,10 @@ class AuthProvider {
     }
   }
 
-  static Future<CustomResponse> encrypt(
-      {required String name,
-      required String phone,
-      required String email}) async {
+  static Future<CustomResponse> encrypt() async {
     try {
-      var params = {
-        "isTesting": true,
-        "name": name,
-        "_id": phone,
-        "email": email
-      };
+      var token = PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
+      var params = {"isTesting": false, "token": token};
       Response response = await dio.post(
         AppNetworkConstants.apiEncrypt,
         options: Options(headers: {

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_local_variable, await_only_futures, dead_code, library_private_types_in_public_api, deprecated_member_use
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_local_variable, await_only_futures, dead_code, library_private_types_in_public_api, deprecated_member_use, use_key_in_widget_constructors, avoid_print, unused_element, sized_box_for_whitespace
 
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,7 +16,7 @@ class NewEnquiryPage extends StatefulWidget {
 class _NewEnquiryPageState extends State<NewEnquiryPage> {
   var myAddsList = [];
   double downloadProgress = 0.0;
-
+  bool globalFlag = false;
   void fetchAddData() async {
     var data = await AuthProvider.fetchInfluAdd(); // Replace with your API call
     print(data);
@@ -36,14 +36,61 @@ class _NewEnquiryPageState extends State<NewEnquiryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: _buildAddsList());
+    return SafeArea(
+        child: Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TextButton(
+              onPressed: () async {
+                setState(() {
+                  globalFlag = !globalFlag;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                //    side: BorderSide(),
+                backgroundColor: !globalFlag
+                    ? Color.fromARGB(255, 99, 62, 151)
+                    : Colors.grey,
+              ),
+              child: Text('My Ads', style: TextStyle(fontSize: 15)),
+            ),
+            // Text("        "),
+            TextButton(
+              onPressed: () async {
+                setState(() {
+                  globalFlag = !globalFlag;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                primary:
+                    globalFlag ? Color.fromARGB(255, 99, 62, 151) : Colors.grey,
+              ),
+              child: Text('All Ads', style: TextStyle(fontSize: 15)),
+            ),
+          ],
+        ),
+        globalFlag ? _buildGlobalAdsList() : _buildAddsList(),
+      ],
+    ));
+  }
+
+  Widget _buildGlobalAdsList() {
+    return const Center(
+      child: Text(
+        "Global Ads list is empty!",
+      ),
+    );
   }
 
   Widget _buildAddsList() {
     if (myAddsList.isEmpty) {
       return const Center(
         child: Text(
-          "Adds list is empty!",
+          "Ads list is empty!",
         ),
       );
     }
@@ -259,12 +306,6 @@ class _NewEnquiryPageState extends State<NewEnquiryPage> {
     return GestureDetector(
       onTap: () async {
         await launchUrl(Uri.parse(url));
-        // Open the link in the browser (Chrome)
-        // You can use the 'url_launcher' package to achieve this.
-        // Make sure to add the package to your dependencies.
-        // Example: https://pub.dev/packages/url_launcher
-        // Import the package and use it to launch the URL.
-        // launch(url);
       },
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,

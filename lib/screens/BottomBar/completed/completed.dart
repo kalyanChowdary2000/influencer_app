@@ -44,7 +44,7 @@ class _CompletedPageState extends State<CompletedPage> {
     if (myAddsList.isEmpty) {
       return const Center(
         child: Text(
-          "Adds list is empty!",
+          "Ads list is empty!",
         ),
       );
     }
