@@ -17,6 +17,10 @@
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>We need access to yout location to suggest app functionality more precisely</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>We need access to yout location to suggest app functionality more precisely</string>
 		<key>NSUserNotificationsUsageDescription</key>
 		<string>Notification are used to notify users about app updates</string>
 		<key>CFBundleInfoDictionaryVersion</key>

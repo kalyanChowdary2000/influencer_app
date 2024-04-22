@@ -3,6 +3,8 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:flutter/material.dart';
 import 'package:influ_app/main.dart';
 import 'package:influ_app/provider/AuthProvider.dart';
@@ -13,7 +15,7 @@ import 'package:influ_app/screens/BottomBar/upComing.dart';
 import 'package:influ_app/screens/BottomBar/walletPage.dart';
 import 'package:influ_app/utils/app_constants.dart';
 import 'package:influ_app/utils/app_preferences.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import './navDrawer.dart';
 
 class MenuPage extends StatefulWidget {
@@ -22,7 +24,7 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
-  int selectedIndex = 1;
+  int selectedIndex = 0;
   var walletAmount = 0;
 
   late AnimationController _rotationController;
@@ -33,12 +35,48 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
   //   NewEnquiryPage(),
   //   CompletedPage(),
   // ];
+  void getLocation() async {
+    var status = await Permission.location.status;
+    print(
+        "______________________________________location status----------${status}");
+    if (status != PermissionStatus.granted) {
+      await Permission.location.request();
+      var status1 = await Permission.location.status;
+      if (status == PermissionStatus.granted) {
+        getLocation();
+      }
+    } else {
+      try {
+        Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+            position.latitude, position.longitude);
+        Placemark place = placemarks[0];
+
+        print(
+            'Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+        print('Address: $place');
+        var data = PreferenceUtils.getString(AppPreferenceConstants.LOGIN_KEY);
+        if (data != '') {
+          var token =
+              PreferenceUtils.getString(AppPreferenceConstants.TOKEN_KEY);
+          var userData = json.decode(data);
+          await AuthProvider.editUser(updatedData: {
+            "address": {"address": place, "coordiantes": position}
+          }, phone: userData["_id"]);
+        }
+      } catch (e) {
+        print('Error getting location: $e');
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     initFirebase();
     refreshWallet();
+    getLocation();
     _rotationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,

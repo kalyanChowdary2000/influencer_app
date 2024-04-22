@@ -905,6 +905,19 @@ class _LinkInstagramDialogState extends State<LinkInstagramDialog> {
     });
   }
 
+  String extractUsernameFromInstagramLink(String instagramLink) {
+    List<String> parts = instagramLink.split('/');
+
+    // Check if there are enough parts and the second part is not empty
+    if (parts.length >= 4 && parts[3].isNotEmpty) {
+      var strArray = parts[3].split('?');
+
+      return strArray[0];
+    } else {
+      return 'Invalid link';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -921,14 +934,14 @@ class _LinkInstagramDialogState extends State<LinkInstagramDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Enter your Instagram ID and add the verification code to your bio',
+            'Enter your Instagram Account Link and add the verification code to your bio',
             style: TextStyle(fontSize: 18),
           ),
           SizedBox(height: 8),
           TextField(
             controller: _instagramIdController,
             decoration: InputDecoration(
-              labelText: 'Instagram ID',
+              labelText: 'Instagram Account Link',
             ),
           ),
           SizedBox(height: 16),
@@ -970,9 +983,12 @@ class _LinkInstagramDialogState extends State<LinkInstagramDialog> {
                 }
               : () async {
                   var instagramId = _instagramIdController.text;
+
                   if (instagramId.isNotEmpty) {
+                    var igId = extractUsernameFromInstagramLink(instagramId);
+                    print(igId);
                     var authResponse = await AuthProvider.verifyInstagram(
-                        username: instagramId,
+                        username: igId,
                         verificationCode: '${_verificationCode}');
                     setState(() {
                       _isVerified = authResponse['success'];
